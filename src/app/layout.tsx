@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/content";
+import { SmoothScroll } from "@/components/providers/smooth-scroll";
+import { Cursor } from "@/components/fx/cursor";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -32,7 +34,10 @@ export default function RootLayout({
       lang="en"
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="grain min-h-full flex flex-col">{children}</body>
+      <body className="grain min-h-full flex flex-col">
+        <SmoothScroll>{children}</SmoothScroll>
+        <Cursor />
+      </body>
     </html>
   );
 }

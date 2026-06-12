@@ -1,9 +1,10 @@
 import { SITE } from "@/lib/content";
+import { HeroCanvas } from "@/components/webgl/hero-canvas";
 
 /**
- * 01 — Surface. Full-viewport hero. The gradient div is a placeholder for
- * the 80k-point particle crystal (Phase 2); the role line gets the
- * decrypt/scramble cycle in Phase 3.
+ * 01 — Surface. Full-viewport hero. The particle crystal renders on top
+ * of a static gradient (which doubles as the reduced-motion / no-WebGL
+ * fallback); the role line gets the decrypt/scramble cycle in Phase 3.
  */
 export function Hero() {
   return (
@@ -12,15 +13,16 @@ export function Hero() {
       aria-label="Hero"
       className="relative flex min-h-screen flex-col justify-end overflow-hidden px-6 pb-16 pt-32 lg:px-10"
     >
-      {/* WebGL placeholder — replaced by particle crystal in Phase 2 */}
+      {/* Static gradient: backdrop while WebGL loads + reduced-motion fallback */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-10"
+        className="absolute inset-0 -z-20"
         style={{
           background:
             "radial-gradient(ellipse 80% 60% at 50% 35%, rgba(125,211,252,0.08), transparent 70%), radial-gradient(ellipse 50% 40% at 50% 40%, rgba(200,211,220,0.05), transparent 60%)",
         }}
       />
+      <HeroCanvas />
 
       <p className="label-mono mb-6">
         {"//"} 01 — surface · {SITE.alias}

@@ -10,7 +10,8 @@ export function Nav() {
       >
         <Link
           href="/"
-          className="font-mono text-sm tracking-tight text-foreground transition-colors hover:text-signal"
+          data-magnetic
+          className="inline-block font-mono text-sm tracking-tight text-foreground transition-colors hover:text-signal"
         >
           {SITE.alias}
         </Link>

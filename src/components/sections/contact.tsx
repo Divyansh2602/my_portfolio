@@ -86,6 +86,7 @@ export function Contact() {
           <Button
             type="submit"
             size="lg"
+            data-magnetic
             className="w-fit font-mono uppercase tracking-[0.25em]"
           >
             transmit →

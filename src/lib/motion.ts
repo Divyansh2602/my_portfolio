@@ -41,9 +41,10 @@ export const STAGGER = {
   items: 0.1,
 } as const;
 
-/** Lenis smooth-scroll config (Phase 3). */
+/** Lenis smooth-scroll config. */
 export const SCROLL = {
-  lerp: 0.1,
+  /** Higher = snappier (less glide latency). 0.1 felt laggy; keep ≥ 0.14. */
+  lerp: 0.16,
   wheelMultiplier: 1,
   /** Max skew (deg) applied to the page at high scroll velocity. */
   maxSkew: 3,
