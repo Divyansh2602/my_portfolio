@@ -1,0 +1,134 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import { Nav } from "@/components/layout/nav";
+import { Footer } from "@/components/layout/footer";
+import { Badge } from "@/components/ui/badge";
+import { PROJECTS } from "@/lib/content";
+
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export function generateStaticParams() {
+  return PROJECTS.map((project) => ({ slug: project.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const project = PROJECTS.find((p) => p.slug === slug);
+  if (!project) return {};
+  return {
+    title: project.title,
+    description: project.tagline,
+  };
+}
+
+export default async function ProjectPage({ params }: PageProps) {
+  const { slug } = await params;
+  const index = PROJECTS.findIndex((p) => p.slug === slug);
+  if (index === -1) notFound();
+
+  const project = PROJECTS[index];
+  const next = PROJECTS[(index + 1) % PROJECTS.length];
+
+  return (
+    <>
+      <Nav />
+      <main className="flex-1 px-6 pt-32 lg:px-10">
+        {/* Case-study hero — shared-element transition target in Phase 4 */}
+        <header className="pb-16">
+          <p className="label-mono mb-6">
+            {"//"} case study — {project.index}/0{PROJECTS.length}
+          </p>
+          <h1 className="text-display text-6xl sm:text-7xl lg:text-8xl">
+            {project.title}
+          </h1>
+          <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+            {project.tagline}
+          </p>
+        </header>
+
+        <div className="grid gap-16 pb-32 lg:grid-cols-2">
+          {/* Sticky media column — real screenshots + diagrams pending */}
+          <div className="lg:sticky lg:top-32 lg:self-start">
+            <div
+              aria-hidden
+              className="flex min-h-[420px] items-center justify-center rounded-lg border"
+              style={{
+                background: `radial-gradient(ellipse 70% 60% at 50% 40%, ${project.accent}14, transparent 70%)`,
+              }}
+            >
+              <span className="label-mono">media — pending assets</span>
+            </div>
+          </div>
+
+          {/* Scrolling text column */}
+          <div className="flex flex-col gap-16">
+            <section aria-label="Overview">
+              <h2 className="label-mono mb-6">overview</h2>
+              <p className="text-lg leading-relaxed text-foreground/90">
+                {project.description}
+              </p>
+            </section>
+
+            <section aria-label="Metrics">
+              <h2 className="label-mono mb-6">metrics</h2>
+              <dl className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-3">
+                {project.metrics.map((metric) => (
+                  <div
+                    key={metric.label}
+                    className="flex flex-col gap-2 bg-background p-6"
+                  >
+                    <dd className="text-display text-2xl text-ice">
+                      {metric.value}
+                    </dd>
+                    <dt className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                      {metric.label}
+                    </dt>
+                  </div>
+                ))}
+              </dl>
+            </section>
+
+            <section aria-label="Stack">
+              <h2 className="label-mono mb-6">stack</h2>
+              <ul className="flex flex-wrap gap-2">
+                {project.stack.map((tech) => (
+                  <li key={tech}>
+                    <Badge
+                      variant="outline"
+                      className="font-mono text-xs uppercase tracking-wider text-muted-foreground"
+                    >
+                      {tech}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </div>
+        </div>
+
+        {/* Next-project footer */}
+        <Link
+          href={`/projects/${next.slug}`}
+          className="group block border-t py-16"
+        >
+          <p className="label-mono mb-4">next project</p>
+          <p className="text-display text-5xl transition-colors group-hover:text-signal sm:text-6xl">
+            {next.title}{" "}
+            <span
+              aria-hidden
+              className="inline-block transition-transform group-hover:translate-x-2"
+            >
+              →
+            </span>
+          </p>
+        </Link>
+      </main>
+      <Footer />
+    </>
+  );
+}
