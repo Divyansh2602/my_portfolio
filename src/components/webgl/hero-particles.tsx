@@ -12,6 +12,11 @@ import * as THREE from "three";
  * rAF clock and made scroll stutter; trig drift reads the same at this
  * amplitude). A mouse uniform repels particles near the cursor. Whole
  * structure rotates slowly. Count is set by GPU tier (hero-canvas.tsx).
+ *
+ * Phase 3: each particle also carries a morph target (aTarget) sampled
+ * on an abstract bust — head sphere, neck cylinder, shoulder ellipsoid.
+ * uMorph (driven by scroll, see particle-field.tsx) blends crystal →
+ * bust as the visitor descends into Profile.
  */
 
 const VERTEX = /* glsl */ `
@@ -19,16 +24,18 @@ uniform float uTime;
 uniform vec3 uMouse;
 uniform float uPixelRatio;
 uniform float uSize;
+uniform float uMorph;
 
 attribute vec3 aColor;
 attribute float aSeed;
 attribute vec3 aDrift;
+attribute vec3 aTarget;
 
 varying vec3 vColor;
 varying float vTwinkle;
 
 void main() {
-  vec3 p = position;
+  vec3 p = mix(position, aTarget, uMorph);
 
   // gentle per-particle drift along a fixed random direction
   float phase = uTime * (0.3 + aSeed * 0.5) + aSeed * 6.2831;
@@ -123,19 +130,64 @@ function mulberry32(seed: number) {
   };
 }
 
+/**
+ * Scroll → render-loop bridge. ScrollTrigger (particle-field.tsx) writes
+ * here; useFrame reads and eases every frame. A mutable module singleton
+ * avoids re-rendering the R3F tree on scroll.
+ */
+export const particleState = { morph: 0 };
+
+/** Sample one point on the abstract bust: head / neck / shoulders. */
+function sampleBust(rand: () => number, out: THREE.Vector3) {
+  const region = rand();
+  if (region < 0.34) {
+    // head — sphere
+    const y = 2 * rand() - 1;
+    const phi = rand() * Math.PI * 2;
+    const s = Math.sqrt(1 - y * y);
+    out
+      .set(Math.cos(phi) * s, y, Math.sin(phi) * s)
+      .multiplyScalar(0.85)
+      .add(HEAD_CENTER);
+  } else if (region < 0.45) {
+    // neck — cylinder
+    const phi = rand() * Math.PI * 2;
+    out.set(Math.cos(phi) * 0.32, 0.05 + rand() * 0.62, Math.sin(phi) * 0.32);
+  } else {
+    // shoulders/chest — ellipsoid with a flat-ish cut at the bottom
+    let y = 2 * rand() - 1;
+    for (let tries = 0; y < -0.78 && tries < 4; tries++) y = 2 * rand() - 1;
+    const phi = rand() * Math.PI * 2;
+    const s = Math.sqrt(1 - y * y);
+    out
+      .set(Math.cos(phi) * s * 1.55, y * 0.95, Math.sin(phi) * s * 0.7)
+      .add(TORSO_CENTER);
+  }
+  out.multiplyScalar(1.55);
+  out.x += (rand() - 0.5) * 0.05;
+  out.y += (rand() - 0.5) * 0.05;
+  out.z += (rand() - 0.5) * 0.05;
+}
+
+const HEAD_CENTER = new THREE.Vector3(0, 1.08, 0);
+const TORSO_CENTER = new THREE.Vector3(0, -0.38, 0);
+
 function Particles({ count }: { count: number }) {
   const material = useRef<THREE.ShaderMaterial>(null);
   const group = useRef<THREE.Group>(null);
   const { gl } = useThree();
 
-  const { positions, colors, seeds, drift } = useMemo(() => {
+  const { positions, colors, seeds, drift, targets } = useMemo(() => {
     const rand = mulberry32(20260612);
+    const bustRand = mulberry32(987654321);
     const shards = buildShards(rand);
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     const seeds = new Float32Array(count);
     const drift = new Float32Array(count * 3);
+    const targets = new Float32Array(count * 3);
     const v = new THREE.Vector3();
+    const t = new THREE.Vector3();
     const c = new THREE.Color();
 
     for (let i = 0; i < count; i++) {
@@ -179,8 +231,14 @@ function Particles({ count }: { count: number }) {
       drift[i * 3] = dx / len;
       drift[i * 3 + 1] = dy / len;
       drift[i * 3 + 2] = dz / len;
+
+      // morph target on the bust
+      sampleBust(bustRand, t);
+      targets[i * 3] = t.x;
+      targets[i * 3 + 1] = t.y;
+      targets[i * 3 + 2] = t.z;
     }
-    return { positions, colors, seeds, drift };
+    return { positions, colors, seeds, drift, targets };
   }, [count]);
 
   const uniforms = useMemo(
@@ -189,6 +247,7 @@ function Particles({ count }: { count: number }) {
       uMouse: { value: new THREE.Vector3(999, 999, 0) },
       uPixelRatio: { value: Math.min(window.devicePixelRatio, 1.5) },
       uSize: { value: 16 },
+      uMorph: { value: 0 },
     }),
     []
   );
@@ -227,11 +286,26 @@ function Particles({ count }: { count: number }) {
     };
   }, [gl]);
 
+  const morphCur = useRef(0);
+
   useFrame((state, delta) => {
     if (!material.current || !group.current) return;
-    material.current.uniforms.uTime.value = state.clock.elapsedTime;
+    // accumulate from delta rather than reading state.clock —
+    // THREE.Clock is deprecated (r184) and R3F hasn't migrated yet
+    material.current.uniforms.uTime.value += Math.min(delta, 0.1);
 
-    group.current.rotation.y += delta * 0.06;
+    // ease toward the scroll-driven morph target, smoothstepped so both
+    // ends of the transition settle gently
+    morphCur.current += (particleState.morph - morphCur.current) * 0.09;
+    const m = morphCur.current;
+    const eased = m * m * (3 - 2 * m);
+    material.current.uniforms.uMorph.value = eased;
+
+    // bust drifts toward the right column of Profile on desktop and
+    // faces forward — rotation slows as the morph completes
+    const shiftX = state.size.width >= 1024 ? 1.7 : 0;
+    group.current.position.x = eased * shiftX;
+    group.current.rotation.y += delta * 0.06 * (1 - 0.75 * eased);
 
     raycaster.setFromCamera(ndc.current, state.camera);
     if (raycaster.ray.intersectPlane(plane, hit)) {
@@ -250,6 +324,7 @@ function Particles({ count }: { count: number }) {
           <bufferAttribute attach="attributes-aColor" args={[colors, 3]} />
           <bufferAttribute attach="attributes-aSeed" args={[seeds, 1]} />
           <bufferAttribute attach="attributes-aDrift" args={[drift, 3]} />
+          <bufferAttribute attach="attributes-aTarget" args={[targets, 3]} />
         </bufferGeometry>
         <shaderMaterial
           ref={material}

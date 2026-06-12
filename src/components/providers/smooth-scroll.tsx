@@ -2,7 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { ReactLenis, type LenisRef } from "lenis/react";
+import type Lenis from "lenis";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SCROLL } from "@/lib/motion";
 import { useMediaQuery, REDUCED_MOTION_QUERY } from "@/lib/hooks";
 
@@ -24,6 +26,34 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     gsap.ticker.add(update);
     gsap.ticker.lagSmoothing(0);
     return () => gsap.ticker.remove(update);
+  }, [reducedMotion]);
+
+  // ScrollTrigger reads window scroll (Lenis drives it natively), but it
+  // must recompute on every Lenis frame, not just native scroll events.
+  useEffect(() => {
+    if (reducedMotion) return;
+    gsap.registerPlugin(ScrollTrigger);
+    let bound: Lenis | null = null;
+    const tryBind = () => {
+      const lenis = lenisRef.current?.lenis;
+      if (lenis && !bound) {
+        bound = lenis;
+        lenis.on("scroll", ScrollTrigger.update);
+      }
+      return !!bound;
+    };
+    // the Lenis instance is created in ReactLenis's own effect — poll
+    // briefly until the ref is populated
+    let interval: number | undefined;
+    if (!tryBind()) {
+      interval = window.setInterval(() => {
+        if (tryBind()) window.clearInterval(interval);
+      }, 50);
+    }
+    return () => {
+      window.clearInterval(interval);
+      bound?.off("scroll", ScrollTrigger.update);
+    };
   }, [reducedMotion]);
 
   if (reducedMotion) return <>{children}</>;
