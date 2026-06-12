@@ -41,6 +41,12 @@ export function Preloader() {
     const unlock = () =>
       document.documentElement.classList.remove("lenis-stopped");
 
+    // signal the hero to play its intro once the overlay is gone
+    const announce = () => {
+      (window as Window & { __diviPreloaded?: boolean }).__diviPreloaded = true;
+      window.dispatchEvent(new Event("divi:preloaded"));
+    };
+
     if (reduced) {
       const t = gsap.to(overlay.current, {
         opacity: 0,
@@ -48,6 +54,7 @@ export function Preloader() {
         delay: 0.3,
         onComplete: () => {
           unlock();
+          announce();
           setDone(true);
         },
       });
@@ -61,6 +68,7 @@ export function Preloader() {
     const tl = gsap.timeline({
       onComplete: () => {
         unlock();
+        announce();
         setDone(true);
       },
     });
@@ -70,6 +78,7 @@ export function Preloader() {
     const failsafe = window.setTimeout(() => {
       tl.kill();
       unlock();
+      announce();
       setDone(true);
     }, 6000);
 

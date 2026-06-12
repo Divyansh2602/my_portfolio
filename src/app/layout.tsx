@@ -4,6 +4,7 @@ import "./globals.css";
 import { SITE } from "@/lib/content";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { Cursor } from "@/components/fx/cursor";
+import { ParticleField } from "@/components/webgl/particle-field";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -35,6 +36,9 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="grain min-h-full flex flex-col">
+        {/* Fixed, behind everything — outside SmoothScroll/skew so its
+            position:fixed isn't broken by a transformed ancestor. */}
+        <ParticleField />
         <SmoothScroll>{children}</SmoothScroll>
         <Cursor />
       </body>
