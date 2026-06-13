@@ -26,6 +26,7 @@ const HELP = [
   "  certs       certification roadmap",
   "  contact     how to reach me",
   "  clear       wipe the screen",
+  "  …and a few hidden ones. go on, poke around.",
 ];
 
 function run(raw: string): Line[] | "clear" {
@@ -91,6 +92,18 @@ function run(raw: string): Line[] | "clear" {
     case "exit":
     case "quit":
       return [{ kind: "sys", text: "there is no exit from the void. only descent." }];
+    case "matrix":
+      return [{ kind: "sys", text: "wake up, Neo… (try the konami code ↑↑↓↓←→←→ b a)" }];
+    case "coffee":
+      return [{ kind: "sys", text: "brewing… ☕ 418: I'm a teapot." }];
+    case "date":
+      return [{ kind: "out", text: new Date().toString() }];
+    case "rm -rf /":
+    case "rm -rf /*":
+      return [
+        { kind: "sys", text: "permission denied — the void cannot be deleted." },
+        { kind: "sys", text: "(nice instinct, though.)" },
+      ];
     case "clear":
       return "clear";
     default:

@@ -109,8 +109,13 @@ export function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const desktop = useMediaQuery("(min-width: 1024px)");
   const [webgl, setWebgl] = useState(false);
   const [active, setActive] = useState(true);
+
+  // pinned horizontal scroll only on desktop with motion allowed; phones
+  // and reduced-motion get a plain vertical stack (robust native scroll)
+  const stacked = reduced || !desktop;
 
   // feed Lenis velocity to the panel shaders
   useLenis((lenis) => {
@@ -145,7 +150,7 @@ export function Projects() {
 
   // pinned horizontal scroll + parallax numbers
   useEffect(() => {
-    if (reduced || !pinRef.current || !trackRef.current) return;
+    if (stacked || !pinRef.current || !trackRef.current) return;
     gsap.registerPlugin(ScrollTrigger);
     const pin = pinRef.current;
     const track = trackRef.current;
@@ -192,7 +197,7 @@ export function Projects() {
 
     ScrollTrigger.refresh();
     return () => ctx.revert();
-  }, [reduced, webgl]);
+  }, [stacked, webgl]);
 
   return (
     <section ref={sectionRef} id="core" aria-label="Projects" className="relative">
@@ -202,12 +207,12 @@ export function Projects() {
 
       <div
         ref={pinRef}
-        className={reduced ? "" : "relative h-screen overflow-hidden"}
+        className={stacked ? "" : "relative h-screen overflow-hidden"}
       >
         <div
           ref={trackRef}
           className={
-            reduced
+            stacked
               ? "flex flex-col gap-6 px-6 pb-6 lg:px-10"
               : "flex h-full w-max items-center gap-6 px-6 lg:px-10"
           }
@@ -218,7 +223,7 @@ export function Projects() {
               project={project}
               webgl={webgl}
               paused={!active}
-              reduced={reduced}
+              reduced={stacked}
             />
           ))}
         </div>

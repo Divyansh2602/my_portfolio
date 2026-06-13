@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SECTIONS, SITE } from "@/lib/content";
+import { SoundToggle } from "@/components/fx/sound-toggle";
 
 export function Nav() {
   return (
@@ -32,12 +33,12 @@ export function Nav() {
           ))}
         </ul>
 
-        <div className="hidden items-center gap-2 whitespace-nowrap font-mono text-xs text-muted-foreground md:flex">
-          <span
-            aria-hidden
-            className="size-1.5 rounded-full bg-signal"
-          />
-          {SITE.status}
+        <div className="flex items-center gap-4">
+          <div className="hidden items-center gap-2 whitespace-nowrap font-mono text-xs text-muted-foreground md:flex">
+            <span aria-hidden className="size-1.5 rounded-full bg-signal" />
+            {SITE.status}
+          </div>
+          <SoundToggle />
         </div>
       </nav>
     </header>
