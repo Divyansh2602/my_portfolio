@@ -1,26 +1,10 @@
 import type { NextRequest } from "next/server";
 import { Resend } from "resend";
 import { contactSchema, HONEYPOT } from "@/lib/contact-schema";
+import { isRateLimited } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-/**
- * Best-effort in-memory rate limit (per IP, sliding window). Fine for a
- * single-instance portfolio; swap for Upstash Ratelimit when scaling
- * horizontally (PLAN.md non-negotiables).
- */
-const WINDOW_MS = 60_000;
-const MAX_HITS = 5;
-const hits = new Map<string, number[]>();
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
-  recent.push(now);
-  hits.set(ip, recent);
-  return recent.length > MAX_HITS;
-}
 
 export async function POST(req: NextRequest) {
   const ip =
@@ -28,7 +12,7 @@ export async function POST(req: NextRequest) {
     req.headers.get("x-real-ip") ||
     "unknown";
 
-  if (isRateLimited(ip)) {
+  if (await isRateLimited(ip)) {
     return Response.json(
       { error: "Too many requests. Give it a minute." },
       { status: 429 }

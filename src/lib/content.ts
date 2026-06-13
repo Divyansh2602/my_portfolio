@@ -11,6 +11,11 @@ export const SITE = {
   status: "open to work",
 } as const;
 
+/** Canonical site origin (no trailing slash). Override per-deploy. */
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://divi-void.vercel.app"
+).replace(/\/$/, "");
+
 export const SECTIONS = [
   { id: "surface", index: "01", label: "surface", title: "Hero" },
   { id: "profile", index: "02", label: "profile", title: "About" },
