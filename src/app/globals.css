@@ -277,3 +277,27 @@ html.custom-cursor * {
     animation: none;
   }
 }
+
+/* View transitions — shared-element morph (project panel → case study).
+   A short blur softens pixel interpolation during the morph. */
+::view-transition-group(*) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+::view-transition-image-pair(*) {
+  animation-name: vt-blur;
+}
+@keyframes vt-blur {
+  40% {
+    filter: blur(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}

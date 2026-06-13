@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    // React <ViewTransition> integration — powers the shared-element morph
+    // from a project panel into its case-study hero.
+    viewTransition: true,
+  },
 };
 
 export default nextConfig;

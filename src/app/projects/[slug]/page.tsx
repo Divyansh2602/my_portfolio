@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Nav } from "@/components/layout/nav";
 import { Footer } from "@/components/layout/footer";
 import { Badge } from "@/components/ui/badge";
+import { ViewTransition } from "@/components/fx/view-transition";
 import { PROJECTS } from "@/lib/content";
 
 interface PageProps {
@@ -52,17 +53,20 @@ export default async function ProjectPage({ params }: PageProps) {
         </header>
 
         <div className="grid gap-16 pb-32 lg:grid-cols-2">
-          {/* Sticky media column — real screenshots + diagrams pending */}
+          {/* Sticky media column — morphs in from the project panel via
+              the shared view-transition name. Real screenshots pending. */}
           <div className="lg:sticky lg:top-32 lg:self-start">
-            <div
-              aria-hidden
-              className="flex min-h-[420px] items-center justify-center rounded-lg border"
-              style={{
-                background: `radial-gradient(ellipse 70% 60% at 50% 40%, ${project.accent}14, transparent 70%)`,
-              }}
-            >
-              <span className="label-mono">media — pending assets</span>
-            </div>
+            <ViewTransition name={`project-media-${project.slug}`}>
+              <div
+                aria-hidden
+                className="flex min-h-[420px] items-center justify-center overflow-hidden rounded-lg border"
+                style={{
+                  background: `linear-gradient(160deg, ${project.accent}12, transparent 55%), radial-gradient(ellipse 70% 60% at 50% 40%, ${project.accent}14, transparent 70%)`,
+                }}
+              >
+                <span className="label-mono">media — pending assets</span>
+              </div>
+            </ViewTransition>
           </div>
 
           {/* Scrolling text column */}
