@@ -2,16 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import {
-  EffectComposer,
-  ChromaticAberration,
-  Vignette,
-} from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
-
-/** Subtle chromatic-aberration offset (kept tiny — a hint, not a glitch). */
-const CA_OFFSET = new THREE.Vector2(0.0009, 0.0011);
 
 /**
  * 01 — Surface particle field: points sampled on the facets of stacked,
@@ -369,17 +360,6 @@ export default function HeroParticlesScene({
       style={{ pointerEvents: "none" }}
     >
       <Particles count={count} />
-      {!paused && (
-        <EffectComposer>
-          <ChromaticAberration
-            blendFunction={BlendFunction.NORMAL}
-            offset={CA_OFFSET}
-            radialModulation={false}
-            modulationOffset={0}
-          />
-          <Vignette eskil={false} offset={0.28} darkness={0.55} />
-        </EffectComposer>
-      )}
     </Canvas>
   );
 }
