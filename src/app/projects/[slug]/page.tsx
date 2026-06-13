@@ -5,6 +5,8 @@ import { Nav } from "@/components/layout/nav";
 import { Footer } from "@/components/layout/footer";
 import { Badge } from "@/components/ui/badge";
 import { ViewTransition } from "@/components/fx/view-transition";
+import { ScrollProgress } from "@/components/fx/scroll-progress";
+import { ArchitectureDiagram } from "@/components/sections/architecture-diagram";
 import { PROJECTS } from "@/lib/content";
 
 interface PageProps {
@@ -37,6 +39,7 @@ export default async function ProjectPage({ params }: PageProps) {
 
   return (
     <>
+      <ScrollProgress />
       <Nav />
       <main className="flex-1 px-6 pt-32 lg:px-10">
         {/* Case-study hero — shared-element transition target in Phase 4 */}
@@ -95,6 +98,11 @@ export default async function ProjectPage({ params }: PageProps) {
                   </div>
                 ))}
               </dl>
+            </section>
+
+            <section aria-label="Architecture">
+              <h2 className="label-mono mb-6">architecture</h2>
+              <ArchitectureDiagram nodes={project.architecture} />
             </section>
 
             <section aria-label="Stack">

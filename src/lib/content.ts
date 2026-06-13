@@ -59,6 +59,8 @@ export interface Project {
   links: { live?: string; repo?: string };
   /** Placeholder tint until real screenshots arrive. */
   accent: string;
+  /** Ordered architecture flow — drawn in on the case-study page. */
+  architecture: string[];
 }
 
 export const PROJECTS: Project[] = [
@@ -86,6 +88,13 @@ export const PROJECTS: Project[] = [
     ],
     links: {},
     accent: "#7DD3FC",
+    architecture: [
+      "Browser client — AES-256-GCM encrypt",
+      "Next.js API — HMAC-SHA-512 verify",
+      "Groq inference — Llama / Mixtral / Gemma2",
+      "Token stream — SSE back to client",
+      "Crypto inspector — every step exposed",
+    ],
   },
   {
     slug: "hr-simulator",
@@ -110,6 +119,13 @@ export const PROJECTS: Project[] = [
     ],
     links: {},
     accent: "#C8D3DC",
+    architecture: [
+      "Resume upload — parse + normalize",
+      "sentence-transformers — 384-dim embed",
+      "PostgreSQL — vector job-match",
+      "Celery workers — async scoring",
+      "Anthropic interviewer — adaptive Q&A",
+    ],
   },
   {
     slug: "drone-routing",
@@ -131,6 +147,13 @@ export const PROJECTS: Project[] = [
     ],
     links: {},
     accent: "#22D3EE",
+    architecture: [
+      "Scenario input — drones, NFZs, orders",
+      "Parametric solver — NFZ intersection math",
+      "Multi-strategy nav — fallback chains",
+      "Greedy scheduler — multi-drone assignment",
+      "Validator — 17-case proof suite",
+    ],
   },
   {
     slug: "pentest-lab",
@@ -154,6 +177,13 @@ export const PROJECTS: Project[] = [
     ],
     links: {},
     accent: "#7DD3FC",
+    architecture: [
+      "Kali attacker — isolated host-only net",
+      "Recon — nmap service + version sweep",
+      "Exploit — Metasploit against Metasploitable",
+      "Post-exploitation — loot + pivot",
+      "Engagement report — findings + remediation",
+    ],
   },
 ];
 

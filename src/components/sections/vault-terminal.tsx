@@ -178,7 +178,8 @@ export function VaultTerminal() {
 
       <div
         ref={scrollRef}
-        className="flex-1 space-y-1 overflow-y-auto p-5 font-mono text-sm leading-relaxed [scrollbar-width:thin]"
+        data-lenis-prevent
+        className="flex-1 space-y-1 overflow-y-auto overscroll-contain p-5 font-mono text-sm leading-relaxed [scrollbar-width:thin]"
       >
         {lines.map((line, i) => (
           <p
