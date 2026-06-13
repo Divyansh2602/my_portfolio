@@ -140,37 +140,37 @@ export const particleState = { morph: 0 };
 /** Sample one point on the abstract bust: head / neck / shoulders. */
 function sampleBust(rand: () => number, out: THREE.Vector3) {
   const region = rand();
-  if (region < 0.34) {
+  if (region < 0.3) {
     // head — sphere
     const y = 2 * rand() - 1;
     const phi = rand() * Math.PI * 2;
     const s = Math.sqrt(1 - y * y);
     out
       .set(Math.cos(phi) * s, y, Math.sin(phi) * s)
-      .multiplyScalar(0.85)
+      .multiplyScalar(0.6)
       .add(HEAD_CENTER);
-  } else if (region < 0.45) {
-    // neck — cylinder
+  } else if (region < 0.42) {
+    // neck — short tapered cylinder bridging head and shoulders
     const phi = rand() * Math.PI * 2;
-    out.set(Math.cos(phi) * 0.32, 0.05 + rand() * 0.62, Math.sin(phi) * 0.32);
+    out.set(Math.cos(phi) * 0.26, 0.05 + rand() * 0.42, Math.sin(phi) * 0.26);
   } else {
-    // shoulders/chest — ellipsoid with a flat-ish cut at the bottom
+    // shoulders/chest — wide, flat ellipsoid (reads as a torso, not a ball)
     let y = 2 * rand() - 1;
-    for (let tries = 0; y < -0.78 && tries < 4; tries++) y = 2 * rand() - 1;
+    for (let tries = 0; y < -0.7 && tries < 4; tries++) y = 2 * rand() - 1;
     const phi = rand() * Math.PI * 2;
     const s = Math.sqrt(1 - y * y);
     out
-      .set(Math.cos(phi) * s * 1.55, y * 0.95, Math.sin(phi) * s * 0.7)
+      .set(Math.cos(phi) * s * 1.85, y * 0.62, Math.sin(phi) * s * 0.6)
       .add(TORSO_CENTER);
   }
-  out.multiplyScalar(1.55);
+  out.multiplyScalar(1.18);
   out.x += (rand() - 0.5) * 0.05;
   out.y += (rand() - 0.5) * 0.05;
   out.z += (rand() - 0.5) * 0.05;
 }
 
-const HEAD_CENTER = new THREE.Vector3(0, 1.08, 0);
-const TORSO_CENTER = new THREE.Vector3(0, -0.38, 0);
+const HEAD_CENTER = new THREE.Vector3(0, 0.92, 0);
+const TORSO_CENTER = new THREE.Vector3(0, -0.5, 0);
 
 function Particles({ count }: { count: number }) {
   const material = useRef<THREE.ShaderMaterial>(null);
@@ -303,7 +303,7 @@ function Particles({ count }: { count: number }) {
 
     // bust drifts toward the right column of Profile on desktop and
     // faces forward — rotation slows as the morph completes
-    const shiftX = state.size.width >= 1024 ? 1.7 : 0;
+    const shiftX = state.size.width >= 1024 ? 1.25 : 0;
     group.current.position.x = eased * shiftX;
     group.current.rotation.y += delta * 0.06 * (1 - 0.75 * eased);
 

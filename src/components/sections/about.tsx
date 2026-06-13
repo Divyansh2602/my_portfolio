@@ -26,32 +26,31 @@ export function About() {
   const reduced = useMediaQuery(REDUCED_MOTION_QUERY);
 
   useEffect(() => {
-    if (!root.current) return;
-    if (reduced) return; // CSS already shows reveal-line at rest under reduced motion
+    const rootEl = root.current;
+    if (!rootEl || reduced) return; // bio is visible by default; reduced motion keeps it so
     gsap.registerPlugin(ScrollTrigger);
-    const ctx = gsap.context((self) => {
-      const el = self.selector!;
 
-      // bio: masked line-by-line reveal as the column enters
-      gsap.fromTo(
-        el("[data-bio]"),
-        { yPercent: 110 },
-        {
-          yPercent: 0,
-          duration: 1,
-          ease: GSAP_EASE.out,
-          stagger: STAGGER.lines,
-          scrollTrigger: {
-            trigger: el("[data-bio-group]")[0],
-            start: "top 80%",
-          },
-        }
-      );
+    const ctx = gsap.context(() => {
+      // bio: masked line-by-line reveal as the column enters.
+      // immediateRender:false → lines stay visible until the trigger
+      // fires, so they can never get stuck hidden if it doesn't.
+      const lines = rootEl.querySelectorAll("[data-bio]");
+      gsap.from(lines, {
+        yPercent: 110,
+        duration: 1,
+        ease: GSAP_EASE.out,
+        stagger: STAGGER.lines,
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: rootEl.querySelector("[data-bio-group]"),
+          start: "top 80%",
+        },
+      });
 
       // stats count-up, once on enter
-      el("[data-count]").forEach((node: Element) => {
-        const target = Number((node as HTMLElement).dataset.count);
-        const suffix = (node as HTMLElement).dataset.suffix ?? "";
+      rootEl.querySelectorAll<HTMLElement>("[data-count]").forEach((node) => {
+        const target = Number(node.dataset.count);
+        const suffix = node.dataset.suffix ?? "";
         const obj = { v: 0 };
         gsap.to(obj, {
           v: target,
@@ -63,8 +62,10 @@ export function About() {
           },
         });
       });
-    }, root);
+    }, rootEl);
 
+    // the pinned Projects section changes page height — recompute positions
+    ScrollTrigger.refresh();
     return () => ctx.revert();
   }, [reduced]);
 
@@ -88,8 +89,10 @@ export function About() {
             className="flex flex-col gap-1 text-xl leading-relaxed text-foreground/90 sm:text-2xl"
           >
             {BIO_LINES.map((line) => (
-              <span key={line} className="reveal-mask">
-                <span data-bio className="reveal-line">
+              // block + overflow-hidden so the mask actually clips (inline
+              // spans don't); inner block is what slides up on reveal
+              <span key={line} className="block overflow-hidden">
+                <span data-bio className="block">
                   {line}
                 </span>
               </span>

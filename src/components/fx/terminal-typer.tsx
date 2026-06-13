@@ -33,7 +33,7 @@ export function TerminalTyper() {
     let line = 0;
     let char = 0;
     let timer = 0;
-    let running = true;
+    let running = false; // starts when first scrolled into view
 
     const step = () => {
       if (!running) return;
@@ -64,11 +64,18 @@ export function TerminalTyper() {
 
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && running) {
-          running = true;
-          step();
+        if (entry.isIntersecting) {
+          // kick off (or resume) — only if not already running, so we
+          // never spawn a second timer chain
+          if (!running) {
+            running = true;
+            step();
+          }
+        } else {
+          // pause off-screen and drop any pending tick
+          running = false;
+          window.clearTimeout(timer);
         }
-        running = entry.isIntersecting;
       },
       { threshold: 0.2 }
     );
