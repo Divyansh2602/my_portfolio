@@ -1,0 +1,97 @@
+import type { NextRequest } from "next/server";
+import { Resend } from "resend";
+import { contactSchema, HONEYPOT } from "@/lib/contact-schema";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+/**
+ * Best-effort in-memory rate limit (per IP, sliding window). Fine for a
+ * single-instance portfolio; swap for Upstash Ratelimit when scaling
+ * horizontally (PLAN.md non-negotiables).
+ */
+const WINDOW_MS = 60_000;
+const MAX_HITS = 5;
+const hits = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
+  recent.push(now);
+  hits.set(ip, recent);
+  return recent.length > MAX_HITS;
+}
+
+export async function POST(req: NextRequest) {
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown";
+
+  if (isRateLimited(ip)) {
+    return Response.json(
+      { error: "Too many requests. Give it a minute." },
+      { status: 429 }
+    );
+  }
+
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return Response.json({ error: "Malformed request." }, { status: 400 });
+  }
+
+  // honeypot: a filled field means a bot — accept silently, send nothing
+  const honey = (body as Record<string, unknown>)?.[HONEYPOT];
+  if (typeof honey === "string" && honey.trim() !== "") {
+    return Response.json({ ok: true });
+  }
+
+  const parsed = contactSchema.safeParse(body);
+  if (!parsed.success) {
+    return Response.json(
+      { error: "Validation failed.", issues: parsed.error.flatten().fieldErrors },
+      { status: 422 }
+    );
+  }
+
+  const { name, email, message } = parsed.data;
+  const apiKey = process.env.RESEND_API_KEY;
+  const to = process.env.CONTACT_TO_EMAIL ?? "divyansh.gupta2023@vitstudent.ac.in";
+  const from = process.env.CONTACT_FROM_EMAIL ?? "DIVI://VOID <onboarding@resend.dev>";
+
+  // No key configured (e.g. local dev) — don't fail the UX, just log.
+  if (!apiKey) {
+    console.warn("[contact] RESEND_API_KEY unset — not delivering", {
+      name,
+      email,
+    });
+    return Response.json({ ok: true, delivered: false });
+  }
+
+  try {
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from,
+      to,
+      replyTo: email,
+      subject: `Signal from ${name}`,
+      text: `${message}\n\n— ${name} <${email}>`,
+    });
+    if (error) {
+      console.error("[contact] resend error", error);
+      return Response.json(
+        { error: "Transmission failed. Email me directly." },
+        { status: 502 }
+      );
+    }
+    return Response.json({ ok: true, delivered: true });
+  } catch (err) {
+    console.error("[contact] send threw", err);
+    return Response.json(
+      { error: "Transmission failed. Email me directly." },
+      { status: 502 }
+    );
+  }
+}

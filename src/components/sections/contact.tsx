@@ -1,14 +1,12 @@
 import { SectionHeading } from "@/components/layout/section-heading";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { ContactForm } from "./contact-form";
+import { ContactBeacon } from "@/components/webgl/contact-beacon";
 import { SITE } from "@/lib/content";
 
 /**
- * 06 — Signal. The beacon placeholder becomes the converged particle
- * sphere in Phase 2/3; the form gets react-hook-form + zod + Resend API,
- * honeypot, and Turnstile in Phase 5. Markup is final.
+ * 06 — Signal. The particle journey converges into a pulsing beacon
+ * sphere here; the form validates with zod, posts to the Resend-backed
+ * API (honeypot + rate-limited), and bursts particles on success.
  */
 export function Contact() {
   return (
@@ -17,15 +15,16 @@ export function Contact() {
       aria-label="Contact"
       className="relative overflow-hidden px-6 py-32 lg:px-10"
     >
-      {/* Beacon placeholder — pulsing particle sphere in Phase 2 */}
+      {/* Soft glow backdrop + reduced-motion fallback for the beacon */}
       <div
         aria-hidden
-        className="absolute left-1/2 top-24 -z-10 size-[36rem] -translate-x-1/2 rounded-full"
+        className="absolute left-1/2 top-24 -z-20 size-[36rem] -translate-x-1/2 rounded-full"
         style={{
           background:
             "radial-gradient(circle, rgba(34,211,238,0.10), rgba(125,211,252,0.05) 40%, transparent 70%)",
         }}
       />
+      <ContactBeacon />
 
       <SectionHeading index="06" label="signal" title="Signal" />
 
@@ -49,49 +48,11 @@ export function Contact() {
           </a>
         </div>
 
-        {/* Static markup — submit handler + API in Phase 5 */}
-        <form className="flex flex-col gap-6" aria-label="Contact form">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="name" className="label-mono">
-                name
-              </Label>
-              <Input id="name" name="name" placeholder="your name" required />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="label-mono">
-                email
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="you@domain.tld"
-                required
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="message" className="label-mono">
-              message
-            </Label>
-            <Textarea
-              id="message"
-              name="message"
-              placeholder="what are we building?"
-              rows={6}
-              required
-            />
-          </div>
-          <Button
-            type="submit"
-            size="lg"
-            data-magnetic
-            className="w-fit font-mono uppercase tracking-[0.25em]"
-          >
-            transmit →
-          </Button>
-        </form>
+        {/* Glass panel — the form sits over the WebGL beacon, so it needs
+            a frosted backdrop to stay readable (design-system rule). */}
+        <div className="glass rounded-xl p-6 sm:p-8">
+          <ContactForm />
+        </div>
       </div>
     </section>
   );
