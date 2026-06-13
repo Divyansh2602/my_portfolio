@@ -160,7 +160,7 @@ function sampleBust(rand: () => number, out: THREE.Vector3) {
     const phi = rand() * Math.PI * 2;
     const s = Math.sqrt(1 - y * y);
     out
-      .set(Math.cos(phi) * s * 1.85, y * 0.62, Math.sin(phi) * s * 0.6)
+      .set(Math.cos(phi) * s * 1.5, y * 0.75, Math.sin(phi) * s * 0.62)
       .add(TORSO_CENTER);
   }
   out.multiplyScalar(1.18);
