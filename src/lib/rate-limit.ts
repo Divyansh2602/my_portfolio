@@ -13,8 +13,23 @@ const MAX_HITS = 5;
 
 // --- in-memory fallback -------------------------------------------------
 const hits = new Map<string, number[]>();
+let lastSweep = Date.now();
+
+/** Evict IPs whose newest hit has aged out, so the Map stays bounded to
+ *  roughly one window's worth of active clients. */
+function sweep(now: number): void {
+  if (now - lastSweep < WINDOW_MS) return;
+  lastSweep = now;
+  for (const [ip, times] of hits) {
+    if (times.length === 0 || times[times.length - 1] <= now - WINDOW_MS) {
+      hits.delete(ip);
+    }
+  }
+}
+
 function memoryLimited(ip: string): boolean {
   const now = Date.now();
+  sweep(now);
   const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
   recent.push(now);
   hits.set(ip, recent);

@@ -13,5 +13,7 @@ export const contactSchema = z.object({
 
 export type ContactInput = z.infer<typeof contactSchema>;
 
-/** Honeypot field name — must arrive empty; bots fill it. */
-export const HONEYPOT = "company";
+/** Honeypot field name — must arrive empty; bots fill it. Deliberately
+ *  non-semantic so browser autofill / password managers leave it alone
+ *  (a name like "company"/"email" gets autofilled and drops real users). */
+export const HONEYPOT = "hp_token";

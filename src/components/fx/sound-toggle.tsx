@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import {
+  getSoundSnapshot,
   isSoundEnabled,
   loadSoundPref,
   setSoundEnabled,
+  subscribeSound,
   tick,
 } from "@/lib/sound";
 
@@ -16,7 +18,13 @@ const INTERACTIVE = "a, button, [role='button'], [data-magnetic]";
  * delegated listener that reads the live enabled state.
  */
 export function SoundToggle() {
-  const [on, setOn] = useState(() => loadSoundPref());
+  // SSR + first client render both read `false`; localStorage is synced in
+  // the effect below, after which the store notifies and we re-render.
+  const on = useSyncExternalStore(subscribeSound, getSoundSnapshot, () => false);
+
+  useEffect(() => {
+    loadSoundPref();
+  }, []);
 
   useEffect(() => {
     let last = 0;
@@ -35,8 +43,7 @@ export function SoundToggle() {
 
   const toggle = () => {
     const next = !on;
-    setOn(next);
-    setSoundEnabled(next);
+    setSoundEnabled(next); // notifies the store → re-render
     if (next) tick(880, 0.06, 0.03); // confirm blip
   };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import gsap from "gsap";
@@ -25,7 +25,7 @@ export function ContactForm() {
   const burstRef = useRef<HTMLDivElement>(null);
   const honeyRef = useRef<HTMLInputElement>(null);
 
-  const fireBurst = () => {
+  const fireBurst = useCallback(() => {
     const host = burstRef.current;
     if (!host || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
       return;
@@ -53,7 +53,13 @@ export function ContactForm() {
         }
       );
     });
-  };
+  }, []);
+
+  // Fire the burst only after the success view has actually mounted —
+  // calling it inline in onSubmit ran before burstRef was attached.
+  useEffect(() => {
+    if (status === "sent") fireBurst();
+  }, [status, fireBurst]);
 
   const onSubmit = async (data: ContactInput) => {
     setStatus("sending");
@@ -73,7 +79,6 @@ export function ContactForm() {
       }
       setStatus("sent");
       reset();
-      fireBurst();
     } catch {
       setServerError("Network error. Email me directly.");
       setStatus("error");
@@ -112,9 +117,10 @@ export function ContactForm() {
       className="flex flex-col gap-6"
       aria-label="Contact form"
     >
-      {/* honeypot — visually hidden, off the tab order */}
-      <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-        <label htmlFor={HONEYPOT}>Company</label>
+      {/* honeypot — hidden from humans and (via display:none + a
+          non-semantic name) from autofill, off the tab order */}
+      <div aria-hidden className="hidden">
+        <label htmlFor={HONEYPOT}>Leave this field empty</label>
         <input
           ref={honeyRef}
           id={HONEYPOT}

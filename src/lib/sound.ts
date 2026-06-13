@@ -9,9 +9,29 @@ const KEY = "divi-sound";
 let enabled = false;
 let ctx: AudioContext | null = null;
 
+// --- external store (for useSyncExternalStore — avoids hydration drift) ---
+const listeners = new Set<() => void>();
+function notify(): void {
+  for (const l of listeners) l();
+}
+export function subscribeSound(cb: () => void): () => void {
+  listeners.add(cb);
+  return () => {
+    listeners.delete(cb);
+  };
+}
+/** Client snapshot — the live module state. */
+export function getSoundSnapshot(): boolean {
+  return enabled;
+}
+
 export function loadSoundPref(): boolean {
   if (typeof window === "undefined") return false;
-  enabled = window.localStorage.getItem(KEY) === "on";
+  const next = window.localStorage.getItem(KEY) === "on";
+  if (next !== enabled) {
+    enabled = next;
+    notify();
+  }
   return enabled;
 }
 
@@ -38,6 +58,7 @@ export function setSoundEnabled(value: boolean): void {
     window.localStorage.setItem(KEY, value ? "on" : "off");
   }
   if (value) ensureCtx();
+  notify();
 }
 
 /** Short synthesized blip. No-op when muted. */
