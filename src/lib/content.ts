@@ -234,38 +234,6 @@ export const PROJECTS: Project[] = [
       "Findings report — downstream-ready",
     ],
   },
-  {
-    slug: "accident-model",
-    index: "06",
-    title: "2026 Accident Model",
-    tagline: "ML model for road accident severity prediction",
-    description:
-      "A machine learning pipeline trained on road accident data to predict accident severity and risk factors. Covers the full ML lifecycle — data cleaning, feature engineering (road type, weather, vehicle class, time-of-day), model selection, and evaluation. Outputs interpretable severity scores to surface the variables with the highest contribution to serious outcomes.",
-    stack: [
-      "Python",
-      "scikit-learn",
-      "pandas",
-      "NumPy",
-      "ML Pipelines",
-    ],
-    metrics: [
-      { value: "end-to-end", label: "ML pipeline" },
-      { value: "multi-factor", label: "feature engineering" },
-      { value: "interpretable", label: "severity scoring" },
-    ],
-    links: {
-      repo: "https://github.com/Divyansh2602/2026_accident_model",
-    },
-    accent: "#FB923C",
-    image: "/projects/accident-model.png",
-    architecture: [
-      "Data ingestion — road accident dataset",
-      "Cleaning & EDA — outlier handling, distributions",
-      "Feature engineering — road / weather / vehicle / time",
-      "Model training — classification & evaluation",
-      "Severity scoring — interpretable risk output",
-    ],
-  },
 ];
 
 export interface Experience {
