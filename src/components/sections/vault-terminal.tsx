@@ -12,7 +12,7 @@ import {
 type Line = { kind: "in" | "out" | "sys"; text: string };
 
 const BANNER = [
-  "DIVI://VOID — vault shell v1.0",
+  "DIVYANSH://VOID — vault shell v1.0",
   "type 'help' for commands · 'sudo hire me' for the good stuff",
 ];
 

@@ -6,7 +6,7 @@
 
 export const SITE = {
   name: "Divyansh Gupta",
-  alias: "DIVI://VOID",
+  alias: "DIVYANSH://VOID",
   email: "divyanshg2602@gmail.com",
   roles: ["security engineer", "blockchain auditor", "ai backend builder"],
   status: "open to work",
