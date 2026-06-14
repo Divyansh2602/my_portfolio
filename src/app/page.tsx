@@ -4,6 +4,7 @@ import { Footer } from "@/components/layout/footer";
 import { SkewWrapper } from "@/components/providers/skew-wrapper";
 import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
+import { Experience } from "@/components/sections/experience";
 import { Skills } from "@/components/sections/skills";
 import { Projects } from "@/components/sections/projects";
 import { Vault } from "@/components/sections/vault";
@@ -21,6 +22,7 @@ export default function Home() {
         <main className="flex-1">
           <Hero />
           <About />
+          <Experience />
           <Skills />
           <Projects />
           <Vault />

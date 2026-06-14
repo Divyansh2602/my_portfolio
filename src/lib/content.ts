@@ -20,10 +20,11 @@ export const SITE_URL = (
 export const SECTIONS = [
   { id: "surface", index: "01", label: "surface", title: "Hero" },
   { id: "profile", index: "02", label: "profile", title: "About" },
-  { id: "systems", index: "03", label: "systems", title: "Skills" },
-  { id: "core", index: "04", label: "core", title: "Projects" },
-  { id: "vault", index: "05", label: "vault", title: "Security" },
-  { id: "signal", index: "06", label: "signal", title: "Contact" },
+  { id: "record", index: "03", label: "record", title: "Experience" },
+  { id: "systems", index: "04", label: "systems", title: "Skills" },
+  { id: "core", index: "05", label: "core", title: "Projects" },
+  { id: "vault", index: "06", label: "vault", title: "Security" },
+  { id: "signal", index: "07", label: "signal", title: "Contact" },
 ] as const;
 
 export type SectionId = (typeof SECTIONS)[number]["id"];
@@ -155,6 +156,34 @@ export const PROJECTS: Project[] = [
       "Validation engine — integrity checks",
       "Scoring — per-endpoint accuracy",
       "Findings report — downstream-ready",
+    ],
+  },
+];
+
+export interface Experience {
+  role: string;
+  org: string;
+  period: string;
+  points: string[];
+}
+
+export const EXPERIENCE: Experience[] = [
+  {
+    role: "Blockchain Developer",
+    org: "IBM",
+    period: "May 2025 – Jun 2025",
+    points: [
+      "Audited Ethereum smart contracts for reentrancy, improper access control, and gas-misuse vulnerabilities.",
+      "Applied secure coding and input validation to harden contract logic; ran iterative testing cycles to eliminate logic flaws pre-deployment.",
+    ],
+  },
+  {
+    role: "Frontend Developer",
+    org: "1Stop.ai",
+    period: "Jan 2024 – Mar 2024",
+    points: [
+      "Built and optimised responsive UIs with HTML, CSS, and JavaScript; restructured frontend architecture to cut load times and improve cross-device consistency.",
+      "Enforced strict input validation and secure JavaScript patterns, reducing client-side attack surface and improving reliability.",
     ],
   },
 ];

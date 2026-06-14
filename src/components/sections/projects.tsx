@@ -202,7 +202,7 @@ export function Projects() {
   return (
     <section ref={sectionRef} id="core" aria-label="Projects" className="relative">
       <div className="px-6 pb-12 pt-32 lg:px-10">
-        <SectionHeading index="04" label="core" title="Core" />
+        <SectionHeading index="05" label="core" title="Core" />
       </div>
 
       <div

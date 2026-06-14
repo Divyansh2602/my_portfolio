@@ -10,7 +10,7 @@ import { SkillCard } from "./skill-card";
 export function Skills() {
   return (
     <section id="systems" aria-label="Skills" className="px-6 py-32 lg:px-10">
-      <SectionHeading index="03" label="systems" title="Systems" />
+      <SectionHeading index="04" label="systems" title="Systems" />
 
       <div className="mt-16 grid gap-px overflow-hidden rounded-lg border bg-border md:grid-cols-3">
         {SKILL_CARDS.map((card) => {

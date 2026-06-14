@@ -17,7 +17,7 @@ export function Vault() {
       aria-label="Security"
       className="bg-black px-6 py-32 lg:px-10"
     >
-      <SectionHeading index="05" label="vault" title="Vault" />
+      <SectionHeading index="06" label="vault" title="Vault" />
 
       <div className="mt-12">
         <VaultLock />
