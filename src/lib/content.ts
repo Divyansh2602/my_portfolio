@@ -141,8 +141,42 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    slug: "risk-pipeline",
+    slug: "smart-contract-auditor",
     index: "03",
+    title: "ChainAudit",
+    tagline: "Automated Solidity smart-contract security auditor",
+    description:
+      "Static analysis engine that parses Solidity smart contracts, extracts the AST, and runs a suite of vulnerability detectors — reentrancy, integer overflow/underflow, unchecked external calls, improper access control, and gas-griefing vectors. Generates structured audit reports with per-finding severity ratings (Critical → Low) and remediation guidance. Built on the blockchain security knowledge from the IBM auditing engagement.",
+    stack: [
+      "Solidity",
+      "JavaScript",
+      "AST Analysis",
+      "Static Analysis",
+      "Web3",
+      "Ethereum",
+    ],
+    metrics: [
+      { value: "6+", label: "vulnerability classes" },
+      { value: "Critical→Low", label: "severity ratings" },
+      { value: "automated", label: "audit reports" },
+    ],
+    links: {
+      repo: "https://github.com/Divyansh2602/smart-contract-auditor",
+      live: "https://chainaudit.vercel.app/",
+    },
+    accent: "#F59E0B",
+    image: "/projects/smart-contract-auditor.png",
+    architecture: [
+      "Solidity parser — AST extraction",
+      "Vulnerability detectors — reentrancy, overflow, access control",
+      "Unchecked-call + gas-griefing scanners",
+      "Severity classifier — Critical / High / Medium / Low",
+      "Audit report — structured findings + remediation",
+    ],
+  },
+  {
+    slug: "risk-pipeline",
+    index: "04",
     title: "Regulatory Risk Signal Pipeline",
     tagline: "Financial risk classification & compliance reporting",
     description:
@@ -171,7 +205,7 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: "data-integrity-analyzer",
-    index: "04",
+    index: "05",
     title: "Automated Data Integrity Analyzer",
     tagline: "Distributed crawling & data-validation backend",
     description:
