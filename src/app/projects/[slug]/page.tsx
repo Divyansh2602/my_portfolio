@@ -130,6 +130,34 @@ export default async function ProjectPage({ params }: PageProps) {
                 ))}
               </ul>
             </section>
+
+            {(project.links.repo || project.links.live) && (
+              <section aria-label="Links">
+                <h2 className="label-mono mb-6">links</h2>
+                <div className="flex flex-wrap gap-4">
+                  {project.links.repo && (
+                    <a
+                      href={project.links.repo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-md border px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:border-ice hover:text-ice"
+                    >
+                      github ↗
+                    </a>
+                  )}
+                  {project.links.live && (
+                    <a
+                      href={project.links.live}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-md border border-signal/30 bg-signal/5 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-signal transition-colors hover:bg-signal/10"
+                    >
+                      live site ↗
+                    </a>
+                  )}
+                </div>
+              </section>
+            )}
           </div>
         </div>
 

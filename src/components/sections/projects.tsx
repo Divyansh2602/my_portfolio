@@ -91,18 +91,42 @@ function Panel({
           ))}
         </ul>
 
-        <Link
-          href={`/projects/${project.slug}`}
-          className="font-mono text-xs uppercase tracking-[0.25em] text-ice transition-colors hover:text-signal"
-        >
-          open case study{" "}
-          <span
-            aria-hidden
-            className="inline-block transition-transform group-hover:translate-x-1"
+        <div className="flex items-center gap-5">
+          {project.links.repo && (
+            <a
+              href={project.links.repo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground transition-colors hover:text-ice"
+              onClick={(e) => e.stopPropagation()}
+            >
+              github ↗
+            </a>
+          )}
+          {project.links.live && (
+            <a
+              href={project.links.live}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground transition-colors hover:text-signal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              live ↗
+            </a>
+          )}
+          <Link
+            href={`/projects/${project.slug}`}
+            className="font-mono text-xs uppercase tracking-[0.25em] text-ice transition-colors hover:text-signal"
           >
-            →
-          </span>
-        </Link>
+            case study{" "}
+            <span
+              aria-hidden
+              className="inline-block transition-transform group-hover:translate-x-1"
+            >
+              →
+            </span>
+          </Link>
+        </div>
       </div>
     </article>
   );
