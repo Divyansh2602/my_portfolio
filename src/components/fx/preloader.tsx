@@ -21,8 +21,13 @@ const BOTTOM_CLIP = `polygon(100% 100%, 0% 100%, ${[...CRACK.split(", ")]
  * ice-crack reveal. Scroll is locked while active. Reduced-motion users
  * get a quick fade instead.
  */
+const SESSION_KEY = "divi:loaded";
+
 export function Preloader() {
-  const [done, setDone] = useState(false);
+  // Skip instantly on same-session back-navigations; only run on hard load.
+  const [done, setDone] = useState(
+    () => typeof window !== "undefined" && !!sessionStorage.getItem(SESSION_KEY)
+  );
   const overlay = useRef<HTMLDivElement>(null);
   const topHalf = useRef<HTMLDivElement>(null);
   const bottomHalf = useRef<HTMLDivElement>(null);
@@ -31,6 +36,18 @@ export function Preloader() {
   const name = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
+    // signal the hero to play its intro once the overlay is gone
+    const announce = () => {
+      (window as Window & { __diviPreloaded?: boolean }).__diviPreloaded = true;
+      window.dispatchEvent(new Event("divi:preloaded"));
+    };
+
+    // Already ran this session — just unblock the hero and exit.
+    if (sessionStorage.getItem(SESSION_KEY)) {
+      announce();
+      return;
+    }
+
     if (!overlay.current) return;
 
     const reduced = window.matchMedia(
@@ -41,10 +58,11 @@ export function Preloader() {
     const unlock = () =>
       document.documentElement.classList.remove("lenis-stopped");
 
-    // signal the hero to play its intro once the overlay is gone
-    const announce = () => {
-      (window as Window & { __diviPreloaded?: boolean }).__diviPreloaded = true;
-      window.dispatchEvent(new Event("divi:preloaded"));
+    const finish = () => {
+      sessionStorage.setItem(SESSION_KEY, "1");
+      unlock();
+      announce();
+      setDone(true);
     };
 
     if (reduced) {
@@ -52,11 +70,7 @@ export function Preloader() {
         opacity: 0,
         duration: 0.4,
         delay: 0.3,
-        onComplete: () => {
-          unlock();
-          announce();
-          setDone(true);
-        },
+        onComplete: finish,
       });
       return () => {
         t.kill();
@@ -65,21 +79,13 @@ export function Preloader() {
     }
 
     const progress = { value: 0 };
-    const tl = gsap.timeline({
-      onComplete: () => {
-        unlock();
-        announce();
-        setDone(true);
-      },
-    });
+    const tl = gsap.timeline({ onComplete: finish });
 
     // rAF doesn't fire in background tabs — never leave the page locked
     // behind the overlay if the timeline can't run.
     const failsafe = window.setTimeout(() => {
       tl.kill();
-      unlock();
-      announce();
-      setDone(true);
+      finish();
     }, 6000);
 
     tl.to(progress, {
