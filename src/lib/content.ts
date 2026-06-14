@@ -1,13 +1,14 @@
 /**
- * Site content. Placeholder copy lives here until Divi supplies the real
- * bio, screenshots, links, and socials (see PLAN.md "Pending input").
+ * Site content — sourced from Divi's resume (overall.pdf), LinkedIn, and
+ * GitHub. Project repo/live URLs and a couple of stats are still pending
+ * confirmation (see the questions Divi was asked).
  */
 
 export const SITE = {
   name: "Divyansh Gupta",
   alias: "DIVI://VOID",
-  email: "divyansh.gupta2023@vitstudent.ac.in",
-  roles: ["principal architect", "security engineer", "full-stack builder"],
+  email: "divyanshg2602@gmail.com",
+  roles: ["full-stack developer", "security engineer", "blockchain auditor"],
   status: "open to work",
 } as const;
 
@@ -28,29 +29,29 @@ export const SECTIONS = [
 export type SectionId = (typeof SECTIONS)[number]["id"];
 
 export const STATS = [
-  { value: 5, suffix: "+", label: "years coding" },
-  { value: 12, suffix: "", label: "ctfs played" },
-  { value: 8, suffix: "+", label: "projects shipped" },
-  { value: 4, suffix: "", label: "stacks mastered" },
+  { value: 3, suffix: "+", label: "years building" },
+  { value: 2, suffix: "", label: "dev internships" },
+  { value: 5, suffix: "", label: "certifications" },
+  { value: 150, suffix: "+", label: "students mentored" },
 ] as const;
 
 export const STACK_MARQUEE = [
-  "TypeScript",
-  "Next.js",
-  "React",
-  "Node.js",
   "Python",
-  "FastAPI",
-  "PostgreSQL",
-  "Redis",
-  "Docker",
-  "Three.js",
-  "GSAP",
-  "Tailwind",
-  "Kali Linux",
-  "Metasploit",
-  "Burp Suite",
-  "C++",
+  "JavaScript",
+  "HTML",
+  "CSS",
+  "REST APIs",
+  "SQL",
+  "MySQL",
+  "ElasticSearch",
+  "Git",
+  "GitHub Actions",
+  "Linux",
+  "Web Crawling",
+  "OWASP Top 10",
+  "Threat Modeling",
+  "Solidity",
+  "Ethereum",
 ] as const;
 
 export interface Project {
@@ -70,176 +71,146 @@ export interface Project {
 
 export const PROJECTS: Project[] = [
   {
-    slug: "ciphermind",
+    slug: "civicshield",
     index: "01",
-    title: "CipherMind",
-    tagline: "End-to-end encrypted AI chatbot",
+    title: "CivicShield",
+    tagline: "Attack-surface mapping & vulnerability scanner",
     description:
-      "Full-stack encrypted AI chat: AES-256-GCM payloads with HMAC-SHA-512 integrity, Groq-served Llama / Mixtral / Gemma2 with token streaming, vision uploads, voice + TTS, and a live crypto-inspector panel exposing every encryption step. Deployed on Vercel + Render.",
+      "A full-stack security platform that automates web crawling and JavaScript endpoint extraction to map an application's attack surface. A custom parameter-fuzzing engine detects SQLi and XSS, with integrated phishing detection and access control for end-to-end threat coverage. Shipped deployment-ready with SEO fundamentals — XML sitemap, Open Graph tags, Google Search Console. Hack Energy 2.0 Finalist.",
     stack: [
-      "Next.js",
-      "Node.js",
-      "AES-256-GCM",
-      "HMAC-SHA-512",
-      "Groq API",
-      "Web Speech",
-      "Vercel",
-      "Render",
+      "Python",
+      "JavaScript",
+      "HTML",
+      "CSS",
+      "Web Crawling",
+      "Fuzzing",
     ],
     metrics: [
-      { value: "AES-256", label: "encryption at rest + transit" },
-      { value: "3", label: "model families served" },
-      { value: "<100ms", label: "first-token streaming" },
+      { value: "Finalist", label: "Hack Energy 2.0" },
+      { value: "SQLi · XSS", label: "vulnerabilities detected" },
+      { value: "end-to-end", label: "threat coverage" },
     ],
-    links: {},
+    links: { repo: "https://github.com/Divyansh2602" },
     accent: "#7DD3FC",
     architecture: [
-      "Browser client — AES-256-GCM encrypt",
-      "Next.js API — HMAC-SHA-512 verify",
-      "Groq inference — Llama / Mixtral / Gemma2",
-      "Token stream — SSE back to client",
-      "Crypto inspector — every step exposed",
+      "Web crawler — JS endpoint extraction",
+      "Parameter fuzzer — SQLi / XSS probes",
+      "Phishing detection + access control",
+      "Attack-surface map — ranked findings",
+      "Deploy-ready — sitemap, OG, Search Console",
     ],
   },
   {
-    slug: "hr-simulator",
+    slug: "risk-pipeline",
     index: "02",
-    title: "AI HR Recruitment Simulator",
-    tagline: "Semantic hiring pipeline with an AI interviewer",
+    title: "Regulatory Risk Signal Pipeline",
+    tagline: "Financial risk classification & compliance reporting",
     description:
-      "FastAPI + PostgreSQL backend that parses resumes, runs semantic job-matching with sentence-transformers, and conducts adaptive interviews powered by Anthropic models. Celery workers handle parsing and scoring asynchronously at scale.",
+      "An end-to-end pipeline that ingests unstructured financial data, classifies risk signals, and indexes findings in ElasticSearch for real-time querying. Automated compliance reports run at over 85% precision, backed by strict per-stage validation that keeps output accurate and auditable for internal and external financial reporting.",
     stack: [
-      "FastAPI",
-      "PostgreSQL",
-      "sentence-transformers",
-      "Anthropic API",
-      "Celery",
-      "Redis",
-      "Docker",
+      "Python",
+      "ElasticSearch",
+      "REST APIs",
+      "Data Pipelines",
+      "Automated Reporting",
     ],
     metrics: [
-      { value: "384-dim", label: "embedding match space" },
-      { value: "async", label: "Celery worker pipeline" },
-      { value: "RBAC", label: "role-scoped API surface" },
+      { value: ">85%", label: "compliance report precision" },
+      { value: "real-time", label: "ElasticSearch querying" },
+      { value: "per-stage", label: "data validation" },
     ],
     links: {},
     accent: "#C8D3DC",
     architecture: [
-      "Resume upload — parse + normalize",
-      "sentence-transformers — 384-dim embed",
-      "PostgreSQL — vector job-match",
-      "Celery workers — async scoring",
-      "Anthropic interviewer — adaptive Q&A",
+      "Ingest — unstructured financial data",
+      "Classify — risk-signal tagging",
+      "Index — ElasticSearch real-time query",
+      "Validate — strict per-stage checks",
+      "Report — automated compliance, >85%",
     ],
   },
   {
-    slug: "drone-routing",
+    slug: "data-integrity-analyzer",
     index: "03",
-    title: "Drone Delivery Routing Engine",
-    tagline: "Geometric pathfinding around no-fly zones",
+    title: "Automated Data Integrity Analyzer",
+    tagline: "Distributed crawling & data-validation backend",
     description:
-      "Competitive-programming-grade routing core: parametric intersection math for no-fly-zone avoidance, multi-strategy navigation with fallback chains, and greedy multi-drone scheduling — proven against a 17-case validation suite.",
+      "A scalable backend that crawls, extracts, and validates data across distributed API surfaces. Modular parallel processing cut the validation cycle time by 60%, and the system emits structured per-endpoint findings reports with accuracy scores for downstream consumption.",
     stack: [
-      "C++",
-      "Computational Geometry",
-      "Greedy Scheduling",
-      "Parametric Intersection",
+      "Python",
+      "REST APIs",
+      "Distributed Crawling",
+      "Parallel Processing",
     ],
     metrics: [
-      { value: "17/17", label: "validation cases passing" },
-      { value: "O(n log n)", label: "scheduling core" },
-      { value: "3", label: "navigation strategies" },
+      { value: "60%", label: "faster validation cycle" },
+      { value: "distributed", label: "parallel API crawl" },
+      { value: "scored", label: "per-endpoint reports" },
     ],
-    links: {},
+    links: { repo: "https://github.com/Divyansh2602" },
     accent: "#22D3EE",
     architecture: [
-      "Scenario input — drones, NFZs, orders",
-      "Parametric solver — NFZ intersection math",
-      "Multi-strategy nav — fallback chains",
-      "Greedy scheduler — multi-drone assignment",
-      "Validator — 17-case proof suite",
-    ],
-  },
-  {
-    slug: "pentest-lab",
-    index: "04",
-    title: "Offensive Security Lab",
-    tagline: "Home pentest lab + cryptography depth",
-    description:
-      "VirtualBox lab running Kali against Metasploitable on an isolated network — recon to exploitation, documented like an engagement. Paired with the eJPT roadmap and implementation-level cryptography: DES, AES, RSA, ECC, ElGamal, SHA-512, DH, DSS.",
-    stack: [
-      "Kali Linux",
-      "Metasploitable",
-      "nmap",
-      "Metasploit",
-      "Wireshark",
-      "Cryptography",
-    ],
-    metrics: [
-      { value: "eJPT", label: "certification track" },
-      { value: "8", label: "ciphers implemented" },
-      { value: "isolated", label: "lab network topology" },
-    ],
-    links: {},
-    accent: "#7DD3FC",
-    architecture: [
-      "Kali attacker — isolated host-only net",
-      "Recon — nmap service + version sweep",
-      "Exploit — Metasploit against Metasploitable",
-      "Post-exploitation — loot + pivot",
-      "Engagement report — findings + remediation",
+      "Distributed crawler — multi-API surfaces",
+      "Parallel workers — modular processing",
+      "Validation engine — integrity checks",
+      "Scoring — per-endpoint accuracy",
+      "Findings report — downstream-ready",
     ],
   },
 ];
 
 export const SKILL_CARDS = [
   {
-    id: "architecture",
-    title: "Architecture",
+    id: "fullstack",
+    title: "Full-Stack",
     blurb:
-      "Systems designed for 10M users — service boundaries, queues, caching layers, and failure modes mapped before the first line ships.",
-    items: ["System design", "API design", "Event-driven", "Scalability"],
+      "End-to-end platforms with responsive, validated UIs and clean REST APIs. HTML/CSS/JavaScript on the front, modular Python services behind — architected for load times and cross-device consistency.",
+    items: ["JavaScript", "Python", "REST APIs", "Responsive UI"],
     featured: true,
   },
   {
     id: "security",
     title: "Security",
     blurb:
-      "OWASP Top 10 / ASVS by default: RBAC, audit logging, rate limiting, hardened JWT auth, strict input validation.",
-    items: ["Pentesting", "Cryptography", "OWASP", "Threat modeling"],
+      "OWASP Top 10 and threat modeling by default. Smart-contract auditing (reentrancy, access control, gas misuse), parameter fuzzing for SQLi/XSS, and strict input validation to shrink the attack surface.",
+    items: ["OWASP Top 10", "Threat modeling", "Smart-contract audit", "Fuzzing"],
     featured: false,
     terminal: true,
   },
   {
-    id: "fullstack",
-    title: "Full-Stack",
+    id: "data",
+    title: "Backend & Data",
     blurb:
-      "Next.js and FastAPI in production — typed end to end, streaming where it matters, observable everywhere.",
-    items: ["Next.js", "FastAPI", "PostgreSQL", "TypeScript"],
+      "Modular Python backends, distributed web crawlers, and data pipelines with per-stage validation and automated reporting — indexed in ElasticSearch for real-time querying.",
+    items: ["Data pipelines", "Web crawling", "ElasticSearch", "SQL / MySQL"],
     featured: false,
   },
   {
-    id: "ml",
-    title: "ML / AI",
+    id: "blockchain",
+    title: "Blockchain",
     blurb:
-      "LLM pipelines with real engineering behind them: embeddings, semantic search, async inference workers.",
-    items: ["LLM integration", "Embeddings", "Semantic search", "Celery"],
+      "Ethereum smart-contract development and security auditing at IBM — secure coding, iterative testing, and logic-flaw elimination before deployment.",
+    items: ["Ethereum", "Solidity", "Contract auditing", "Secure coding"],
     featured: false,
   },
 ] as const;
 
 export const VAULT_PHILOSOPHY =
-  "Security is not a feature you add — it is the substrate everything else runs on. Every system I ship assumes hostile input, least privilege, and an audit trail.";
+  "Security is not a feature you bolt on — it is the substrate everything else runs on. Every system I ship assumes hostile input, least privilege, and an audit trail.";
 
 export const CERT_ROADMAP = [
-  { year: "2024", label: "Home lab — Kali vs Metasploitable", done: true },
-  { year: "2025", label: "Cryptography core — DES → ECC → DSS", done: true },
-  { year: "2026", label: "eJPT certification", done: false },
-  { year: "2027", label: "OSCP track", done: false },
+  { year: "2024", label: "Frontend Developer — 1Stop.ai", done: true },
+  { year: "2024", label: "Google Cybersecurity Professional — Coursera", done: true },
+  { year: "2025", label: "Blockchain Developer — IBM", done: true },
+  { year: "2026", label: "Hack Energy 2.0 Finalist — CivicShield", done: true },
+  { year: "2027", label: "B.Tech CSE — VIT (expected)", done: false },
 ] as const;
 
 export const SOCIALS = [
-  { label: "github", href: "https://github.com/" },
-  { label: "linkedin", href: "https://linkedin.com/" },
+  { label: "github", href: "https://github.com/Divyansh2602" },
+  {
+    label: "linkedin",
+    href: "https://www.linkedin.com/in/divyansh-gupta-485b04377/",
+  },
   { label: "email", href: `mailto:${SITE.email}` },
 ] as const;

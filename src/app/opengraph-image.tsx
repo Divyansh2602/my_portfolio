@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { SITE } from "@/lib/content";
 
-export const alt = `${SITE.name} — architect · security engineer · builder`;
+export const alt = `${SITE.name} — full-stack developer · security engineer`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -53,7 +53,7 @@ export default function OpengraphImage() {
               fontFamily: "monospace",
             }}
           >
-            architect · security engineer · builder
+            full-stack developer · security engineer
           </div>
         </div>
 

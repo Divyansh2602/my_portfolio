@@ -20,11 +20,11 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE.name} — architect · security engineer · builder`,
+    default: `${SITE.name} — full-stack developer · security engineer`,
     template: `%s — ${SITE.name}`,
   },
   description:
-    "Principal software architect and security engineer. Encrypted AI systems, semantic pipelines, offensive security. Descend through the void.",
+    "Full-stack developer and security engineer. End-to-end platforms, data pipelines, attack-surface tooling, and Ethereum smart-contract auditing. Descend through the void.",
   keywords: [
     "Divyansh Gupta",
     "software architect",
@@ -68,15 +68,19 @@ const personJsonLd = {
   alternateName: SITE.alias,
   url: SITE_URL,
   email: `mailto:${SITE.email}`,
-  jobTitle: "Software Architect & Security Engineer",
+  jobTitle: "Full-Stack Developer & Security Engineer",
   knowsAbout: [
-    "Software Architecture",
-    "Cybersecurity",
-    "Cryptography",
-    "Penetration Testing",
     "Full-Stack Development",
-    "Machine Learning",
+    "Web Application Security",
+    "OWASP Top 10",
+    "Threat Modeling",
+    "Blockchain & Smart-Contract Auditing",
+    "Data Pipeline Engineering",
   ],
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "Vellore Institute of Technology",
+  },
   sameAs: SOCIALS.filter((s) => s.label !== "email").map((s) => s.href),
 };
 

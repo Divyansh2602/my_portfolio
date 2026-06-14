@@ -41,7 +41,7 @@ function run(raw: string): Line[] | "clear" {
     case "whoami":
       return [
         { kind: "out", text: `${SITE.name} — ${SITE.roles.join(" · ")}` },
-        { kind: "out", text: "VIT CS · eJPT track · permanently curious" },
+        { kind: "out", text: "VIT CSE '27 · ex-IBM blockchain · security-first" },
       ];
     case "projects":
       return [
@@ -53,9 +53,10 @@ function run(raw: string): Line[] | "clear" {
         { kind: "sys", text: "→ scroll up to /core to open any case study" },
       ];
     case "ctf":
+    case "hackathon":
       return [
-        { kind: "out", text: "ctf: 12 played · web · crypto · pwn · forensics" },
-        { kind: "out", text: "favourite class: crypto (DES→ECC→DSS, by hand)" },
+        { kind: "out", text: "Hack Energy 2.0 — Finalist (CivicShield)" },
+        { kind: "out", text: "focus: appsec · web crawling · smart-contract audit" },
       ];
     case "skills":
       return SKILL_CARDS.map((c) => ({

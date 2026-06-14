@@ -9,11 +9,11 @@ import { GSAP_EASE, STAGGER } from "@/lib/motion";
 import { useMediaQuery, REDUCED_MOTION_QUERY } from "@/lib/hooks";
 
 const BIO_LINES = [
-  "I design systems that assume hostile input.",
-  "Principal-level architecture, security engineering, and full-stack",
-  "delivery — currently studying CS at VIT, permanently studying",
-  "everything else. Encrypted AI chat, semantic hiring pipelines,",
-  "drone routing math, and a home pentest lab that gets no mercy.",
+  "I build end-to-end platforms that assume hostile input.",
+  "Full-stack developer with a security habit — CS at VIT (class",
+  "of 2027), Hack Energy 2.0 finalist, and a blockchain dev who",
+  "audited Ethereum contracts at IBM. I ship validated UIs, modular",
+  "Python backends, data pipelines, and tooling that maps attack surface.",
 ];
 
 /**
