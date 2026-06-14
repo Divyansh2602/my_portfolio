@@ -64,8 +64,9 @@ export interface Project {
   stack: string[];
   metrics: { value: string; label: string }[];
   links: { live?: string; repo?: string };
-  /** Placeholder tint until real screenshots arrive. */
   accent: string;
+  /** Optional screenshot served from /public/projects/. Falls back to accent gradient. */
+  image?: string;
   /** Ordered architecture flow — drawn in on the case-study page. */
   architecture: string[];
 }
@@ -96,6 +97,7 @@ export const PROJECTS: Project[] = [
       live: "https://civicshieldx.vercel.app/",
     },
     accent: "#34D399",
+    image: "/projects/civicshield.png",
     architecture: [
       "Real-time threat feed — DDoS/ransomware/phishing events",
       "3D globe — curved cross-border attack-path arcs",
@@ -129,6 +131,7 @@ export const PROJECTS: Project[] = [
       live: "https://ciphermind-frontend.vercel.app/",
     },
     accent: "#A78BFA",
+    image: "/projects/ciphermind.png",
     architecture: [
       "PBKDF2 — session key derivation",
       "AES-256-GCM — message encryption in-browser",

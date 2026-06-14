@@ -61,13 +61,23 @@ export default async function ProjectPage({ params }: PageProps) {
           <div className="lg:sticky lg:top-32 lg:self-start">
             <ViewTransition name={`project-media-${project.slug}`}>
               <div
-                aria-hidden
-                className="flex min-h-[420px] items-center justify-center overflow-hidden rounded-lg border"
-                style={{
+                className="relative min-h-[420px] overflow-hidden rounded-lg border"
+                style={!project.image ? {
                   background: `linear-gradient(160deg, ${project.accent}12, transparent 55%), radial-gradient(ellipse 70% 60% at 50% 40%, ${project.accent}14, transparent 70%)`,
-                }}
+                } : undefined}
               >
-                <span className="label-mono">media — pending assets</span>
+                {project.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={project.image}
+                    alt={`${project.title} screenshot`}
+                    className="h-full w-full object-cover object-top"
+                  />
+                ) : (
+                  <div className="flex min-h-[420px] items-center justify-center">
+                    <span className="label-mono">media — pending assets</span>
+                  </div>
+                )}
               </div>
             </ViewTransition>
           </div>
