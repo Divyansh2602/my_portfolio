@@ -31,7 +31,7 @@ export type SectionId = (typeof SECTIONS)[number]["id"];
 
 export const STATS = [
   { value: 3, suffix: "+", label: "years building" },
-  { value: 2, suffix: "", label: "dev internships" },
+  { value: 3, suffix: "", label: "dev internships" },
   { value: 5, suffix: "", label: "certifications" },
   { value: 150, suffix: "+", label: "students mentored" },
 ] as const;
@@ -75,35 +75,71 @@ export const PROJECTS: Project[] = [
     slug: "civicshield",
     index: "01",
     title: "CivicShield",
-    tagline: "Attack-surface mapping & vulnerability scanner",
+    tagline: "AI threat-intelligence platform & vulnerability scanner",
     description:
-      "A full-stack security platform that automates web crawling and JavaScript endpoint extraction to map an application's attack surface. A custom parameter-fuzzing engine detects SQLi and XSS, with integrated phishing detection and access control for end-to-end threat coverage. Shipped deployment-ready with SEO fundamentals — XML sitemap, Open Graph tags, Google Search Console. Hack Energy 2.0 Finalist.",
+      "AI-powered cybersecurity platform with a real-time global threat dashboard. Visualises active attack paths on a 3D globe, auto-classifies severity (Low→Critical), and streams live threat feeds for DDoS, ransomware, and phishing events. Full vulnerability scanner, attack-surface mapper, phishing detector, and API security analyser — backed by CivicShield AI for scan-derived intelligence insights. Hack Energy 2.0 Finalist.",
     stack: [
       "Python",
       "JavaScript",
-      "HTML",
-      "CSS",
+      "AI/ML",
+      "REST APIs",
       "Web Crawling",
-      "Fuzzing",
+      "3D Visualisation",
     ],
     metrics: [
       { value: "Finalist", label: "Hack Energy 2.0" },
-      { value: "SQLi · XSS", label: "vulnerabilities detected" },
-      { value: "end-to-end", label: "threat coverage" },
+      { value: "real-time", label: "global threat feed" },
+      { value: "AI-powered", label: "scan intelligence" },
     ],
-    links: { repo: "https://github.com/Divyansh2602" },
-    accent: "#7DD3FC",
+    links: {
+      repo: "https://github.com/Divyansh2602/CivicShield_full",
+      live: "https://civicshieldx.vercel.app/",
+    },
+    accent: "#34D399",
     architecture: [
-      "Web crawler — JS endpoint extraction",
-      "Parameter fuzzer — SQLi / XSS probes",
-      "Phishing detection + access control",
-      "Attack-surface map — ranked findings",
-      "Deploy-ready — sitemap, OG, Search Console",
+      "Real-time threat feed — DDoS/ransomware/phishing events",
+      "3D globe — curved cross-border attack-path arcs",
+      "Vulnerability scanner — attack-surface mapper",
+      "Phishing detection + API security analysis",
+      "CivicShield AI — scan-derived intelligence",
+    ],
+  },
+  {
+    slug: "ciphermind",
+    index: "02",
+    title: "CipherMind",
+    tagline: "End-to-end encrypted AI chat",
+    description:
+      "Encrypted AI chat where every message is AES-256-GCM ciphered before leaving the browser — zero plaintext in transit. Session keys are derived via PBKDF2 and integrity is guaranteed by HMAC-SHA512. The Groq Llama 3.3 70B backend runs server-side with the API key fully protected. Tracks encrypted/decrypted message counts, token usage, and HMAC checks per session.",
+    stack: [
+      "React",
+      "TypeScript",
+      "AES-256-GCM",
+      "PBKDF2",
+      "HMAC-SHA512",
+      "Groq API",
+    ],
+    metrics: [
+      { value: "AES-256", label: "GCM encryption" },
+      { value: "zero", label: "plaintext in transit" },
+      { value: "Llama 3.3 70B", label: "Groq backend" },
+    ],
+    links: {
+      repo: "https://github.com/Divyansh2602/ciphermind",
+      live: "https://ciphermind-frontend.vercel.app/",
+    },
+    accent: "#A78BFA",
+    architecture: [
+      "PBKDF2 — session key derivation",
+      "AES-256-GCM — message encryption in-browser",
+      "HMAC-SHA512 — integrity verification",
+      "Groq API — Llama 3.3 70B server-side",
+      "Session store — encrypted history + export",
     ],
   },
   {
     slug: "risk-pipeline",
-    index: "02",
+    index: "03",
     title: "Regulatory Risk Signal Pipeline",
     tagline: "Financial risk classification & compliance reporting",
     description:
@@ -132,7 +168,7 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: "data-integrity-analyzer",
-    index: "03",
+    index: "04",
     title: "Automated Data Integrity Analyzer",
     tagline: "Distributed crawling & data-validation backend",
     description:
@@ -168,6 +204,15 @@ export interface Experience {
 }
 
 export const EXPERIENCE: Experience[] = [
+  {
+    role: "Backend Engineer",
+    org: "XtraGrad",
+    period: "2026 – Present",
+    points: [
+      "Building the backend for an AI-powered HR platform — designing APIs, data models, and AI integration layers for automated recruitment and candidate workflows.",
+      "Architecting scalable Python services and integrating LLM-driven features to automate HR decision pipelines end-to-end.",
+    ],
+  },
   {
     role: "Blockchain Developer",
     org: "IBM",
@@ -229,8 +274,8 @@ export const VAULT_PHILOSOPHY =
 
 export const CERT_ROADMAP = [
   { year: "2024", label: "Frontend Developer — 1Stop.ai", done: true },
-  { year: "2024", label: "Google Cybersecurity Professional — Coursera", done: true },
   { year: "2025", label: "Blockchain Developer — IBM", done: true },
+  { year: "2026", label: "Google Cybersecurity Professional — Coursera", done: true },
   { year: "2026", label: "Hack Energy 2.0 Finalist — CivicShield", done: true },
   { year: "2027", label: "B.Tech CSE — VIT (expected)", done: false },
 ] as const;
