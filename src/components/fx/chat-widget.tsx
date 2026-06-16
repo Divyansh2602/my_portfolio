@@ -112,8 +112,12 @@ export function ChatWidget() {
             </button>
           </div>
 
-          {/* Messages */}
-          <div className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
+          {/* Messages — min-h-0 lets flex shrink so overflow-y-auto actually fires;
+              data-lenis-prevent stops Lenis hijacking wheel events inside the panel */}
+          <div
+            className="flex flex-1 flex-col gap-3 overflow-y-auto p-4 min-h-0"
+            data-lenis-prevent
+          >
             {messages.map((msg, i) => (
               <div
                 key={i}
@@ -186,13 +190,27 @@ export function ChatWidget() {
         </div>
       )}
 
-      {/* Toggle button */}
+      {/* Toggle button — solid so it's impossible to miss */}
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Close chat" : "Chat with Divyansh"}
-        className="glass flex size-12 items-center justify-center rounded-full border border-signal/40 text-signal shadow-lg transition-all hover:border-signal hover:bg-signal/10 hover:shadow-signal/20"
+        className={`flex items-center gap-2 rounded-full px-5 py-3 font-mono text-xs font-semibold uppercase tracking-widest shadow-lg shadow-signal/40 transition-all hover:scale-105 hover:shadow-signal/60 ${
+          open
+            ? "bg-void border border-signal/40 text-signal"
+            : "bg-signal text-void"
+        }`}
       >
-        {open ? <X size={18} /> : <MessageSquare size={18} />}
+        {open ? (
+          <>
+            <X size={15} />
+            <span>close</span>
+          </>
+        ) : (
+          <>
+            <MessageSquare size={15} />
+            <span>chat with me</span>
+          </>
+        )}
       </button>
     </div>
   );

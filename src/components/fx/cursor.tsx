@@ -128,7 +128,7 @@ export function Cursor() {
   if (!active) return null;
 
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-[150]">
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-[999]">
       <div
         ref={dot}
         className="absolute left-0 top-0 size-1.5 rounded-full bg-silver opacity-0"
