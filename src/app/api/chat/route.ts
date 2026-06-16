@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import Groq from "groq-sdk";
 import {
   SITE,
   PROJECTS,
@@ -9,7 +9,12 @@ import {
   VAULT_PHILOSOPHY,
 } from "@/lib/content";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+// Lazy — don't instantiate at module load (build fails if key is absent).
+let _groq: Groq | null = null;
+function getGroq(): Groq {
+  if (!_groq) _groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  return _groq;
+}
 
 // In-memory rate limit for chat: 30 messages per 60 s per IP.
 const chatHits = new Map<string, number[]>();
@@ -73,7 +78,7 @@ export async function POST(req: Request): Promise<Response> {
     return Response.json({ error: "rate_limited" }, { status: 429 });
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.GROQ_API_KEY) {
     return Response.json({ error: "no_key" }, { status: 503 });
   }
 
@@ -88,11 +93,10 @@ export async function POST(req: Request): Promise<Response> {
   // Cap history to last 20 turns to keep prompt tokens bounded.
   const history = messages.slice(-20);
 
-  const stream = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
+  const stream = await getGroq().chat.completions.create({
+    model: "llama-3.3-70b-versatile",
     max_tokens: 512,
-    system: buildSystem(),
-    messages: history,
+    messages: [{ role: "system", content: buildSystem() }, ...history],
     stream: true,
   });
 
@@ -100,13 +104,9 @@ export async function POST(req: Request): Promise<Response> {
   const readable = new ReadableStream({
     async start(controller) {
       try {
-        for await (const event of stream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta"
-          ) {
-            controller.enqueue(encoder.encode(event.delta.text));
-          }
+        for await (const chunk of stream) {
+          const text = chunk.choices[0]?.delta?.content ?? "";
+          if (text) controller.enqueue(encoder.encode(text));
         }
       } finally {
         controller.close();
