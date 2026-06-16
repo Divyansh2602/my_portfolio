@@ -85,14 +85,14 @@ export default async function ProjectPage({ params }: PageProps) {
           {/* Scrolling text column */}
           <div className="flex flex-col gap-16">
             <section aria-label="Overview">
-              <h2 className="label-mono mb-6">overview</h2>
+              <h2 className="mb-6 font-mono text-xs uppercase tracking-[0.25em] text-silver">overview</h2>
               <p className="text-lg leading-relaxed text-foreground/90">
                 {project.description}
               </p>
             </section>
 
             <section aria-label="Metrics">
-              <h2 className="label-mono mb-6">metrics</h2>
+              <h2 className="mb-6 font-mono text-xs uppercase tracking-[0.25em] text-silver">metrics</h2>
               <dl className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-3">
                 {project.metrics.map((metric) => (
                   <div
@@ -111,18 +111,18 @@ export default async function ProjectPage({ params }: PageProps) {
             </section>
 
             <section aria-label="Architecture">
-              <h2 className="label-mono mb-6">architecture</h2>
+              <h2 className="mb-6 font-mono text-xs uppercase tracking-[0.25em] text-silver">architecture</h2>
               <ArchitectureDiagram nodes={project.architecture} />
             </section>
 
             <section aria-label="Stack">
-              <h2 className="label-mono mb-6">stack</h2>
+              <h2 className="mb-6 font-mono text-xs uppercase tracking-[0.25em] text-silver">stack</h2>
               <ul className="flex flex-wrap gap-2">
                 {project.stack.map((tech) => (
                   <li key={tech}>
                     <Badge
                       variant="outline"
-                      className="font-mono text-xs uppercase tracking-wider text-muted-foreground"
+                      className="font-mono text-xs uppercase tracking-wider text-foreground/80 border-silver/40"
                     >
                       {tech}
                     </Badge>
@@ -133,7 +133,7 @@ export default async function ProjectPage({ params }: PageProps) {
 
             {(project.links.repo || project.links.live) && (
               <section aria-label="Links">
-                <h2 className="label-mono mb-6">links</h2>
+                <h2 className="mb-6 font-mono text-xs uppercase tracking-[0.25em] text-silver">links</h2>
                 <div className="flex flex-wrap gap-4">
                   {project.links.repo && (
                     <a
