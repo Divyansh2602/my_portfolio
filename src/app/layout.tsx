@@ -4,7 +4,6 @@ import "./globals.css";
 import { SITE, SITE_URL, SOCIALS } from "@/lib/content";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { Cursor } from "@/components/fx/cursor";
-import { ParticleField } from "@/components/webgl/particle-field";
 import { EasterEggs } from "@/components/fx/easter-eggs";
 import { ChatWidget } from "@/components/fx/chat-widget";
 
@@ -100,9 +99,6 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
-        {/* Fixed, behind everything — outside SmoothScroll/skew so its
-            position:fixed isn't broken by a transformed ancestor. */}
-        <ParticleField />
         <SmoothScroll>{children}</SmoothScroll>
         <Cursor />
         <EasterEggs />

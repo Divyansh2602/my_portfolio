@@ -2,6 +2,7 @@ import { Nav } from "@/components/layout/nav";
 import { Preloader } from "@/components/fx/preloader";
 import { Footer } from "@/components/layout/footer";
 import { SkewWrapper } from "@/components/providers/skew-wrapper";
+import { ParticleField } from "@/components/webgl/particle-field";
 import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
 import { Experience } from "@/components/sections/experience";
@@ -13,6 +14,11 @@ import { Contact } from "@/components/sections/contact";
 export default function Home() {
   return (
     <>
+      {/* Fixed, behind everything — must be outside SkewWrapper so its
+          position:fixed isn't broken by a transformed ancestor. Lives on
+          page.tsx (not layout) so it remounts on each visit and the GSAP
+          opacity/paused state resets cleanly on back-navigation. */}
+      <ParticleField />
       <Preloader />
       <Nav />
       {/* Only the scrolling content shears on velocity — Nav/Preloader/
