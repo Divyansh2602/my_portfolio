@@ -115,7 +115,7 @@ export function ChatWidget() {
           {/* Messages — min-h-0 lets flex shrink so overflow-y-auto actually fires;
               data-lenis-prevent stops Lenis hijacking wheel events inside the panel */}
           <div
-            className="flex flex-1 flex-col gap-3 overflow-y-auto p-4 min-h-0"
+            className="flex flex-1 flex-col gap-3 overflow-y-auto p-4 min-h-0 overscroll-contain"
             data-lenis-prevent
           >
             {messages.map((msg, i) => (
