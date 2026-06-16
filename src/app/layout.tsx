@@ -6,6 +6,7 @@ import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { Cursor } from "@/components/fx/cursor";
 import { ParticleField } from "@/components/webgl/particle-field";
 import { EasterEggs } from "@/components/fx/easter-eggs";
+import { ChatWidget } from "@/components/fx/chat-widget";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -105,6 +106,7 @@ export default function RootLayout({
         <SmoothScroll>{children}</SmoothScroll>
         <Cursor />
         <EasterEggs />
+        <ChatWidget />
       </body>
     </html>
   );
