@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { cookies } from "next/headers";
 import "./globals.css";
 import { SITE, SITE_URL, SOCIALS } from "@/lib/content";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
@@ -84,23 +85,23 @@ const personJsonLd = {
   sameAs: SOCIALS.filter((s) => s.label !== "email").map((s) => s.href),
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Read theme cookie so the server renders the correct class — eliminates
+  // the SSR/client className mismatch and the dev-mode hydration error.
+  const jar = await cookies();
+  const theme = jar.get("divi-theme")?.value === "light" ? "light" : "";
+
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased${theme ? ` ${theme}` : ""}`}
+      suppressHydrationWarning
     >
       <body className="grain min-h-full flex flex-col">
-        {/* Apply saved theme before first paint to prevent dark→light flash */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('divi-theme');if(t==='light')document.documentElement.classList.add('light');}catch(e){}`,
-          }}
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -8,13 +8,18 @@ import * as THREE from "three";
  * 06 — Signal beacon: particles converge on a sphere and pulse like a
  * transmitter. Slow rotation, a breathing radius, and a twinkle. This is
  * the particle journey's terminus (crystal → bust → … → beacon).
+ *
+ * Theme transition: both dark and light color arrays are precomputed once.
+ * uColorMix animates smoothly in useFrame — no geometry rebuild on toggle.
  */
 
 const VERTEX = /* glsl */ `
   uniform float uTime;
   uniform float uPixelRatio;
   uniform float uSize;
-  attribute vec3 aColor;
+  uniform float uColorMix;
+  attribute vec3 aDarkColor;
+  attribute vec3 aLightColor;
   attribute float aSeed;
   varying vec3 vColor;
   varying float vTwinkle;
@@ -28,12 +33,13 @@ const VERTEX = /* glsl */ `
     gl_Position = projectionMatrix * mv;
     gl_PointSize = uSize * uPixelRatio * (1.0 / -mv.z);
 
-    vColor = aColor;
+    vColor = mix(aDarkColor, aLightColor, uColorMix);
     vTwinkle = 0.6 + 0.4 * sin(uTime * (2.0 + aSeed) + aSeed * 30.0);
   }
 `;
 
 const FRAGMENT = /* glsl */ `
+  uniform float uBaseAlpha;
   varying vec3 vColor;
   varying float vTwinkle;
   void main() {
@@ -41,12 +47,14 @@ const FRAGMENT = /* glsl */ `
     float d = length(uv);
     float alpha = smoothstep(0.5, 0.05, d) * vTwinkle;
     if (alpha < 0.01) discard;
-    gl_FragColor = vec4(vColor, alpha * 0.5);
+    gl_FragColor = vec4(vColor, alpha * uBaseAlpha);
   }
 `;
 
 const ICE = new THREE.Color("#7DD3FC");
 const SIGNAL = new THREE.Color("#22D3EE");
+const ICE_LIGHT = new THREE.Color("#1565C0");
+const SIGNAL_LIGHT = new THREE.Color("#0C7A9A");
 
 /** Deterministic PRNG — keeps the beacon pure across re-renders. */
 function mulberry32(seed: number) {
@@ -59,14 +67,16 @@ function mulberry32(seed: number) {
   };
 }
 
-function Beacon({ count }: { count: number }) {
+function Beacon({ count, isLight }: { count: number; isLight: boolean }) {
   const mat = useRef<THREE.ShaderMaterial>(null);
   const group = useRef<THREE.Group>(null);
 
-  const { positions, colors, seeds } = useMemo(() => {
+  // Both color sets precomputed once — no rebuild on theme toggle.
+  const { positions, darkColors, lightColors, seeds } = useMemo(() => {
     const rand = mulberry32(20260613);
     const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
+    const darkColors = new Float32Array(count * 3);
+    const lightColors = new Float32Array(count * 3);
     const seeds = new Float32Array(count);
     const c = new THREE.Color();
     const golden = Math.PI * (3 - Math.sqrt(5));
@@ -80,29 +90,73 @@ function Beacon({ count }: { count: number }) {
       positions[i * 3 + 1] = y * radius;
       positions[i * 3 + 2] = Math.sin(theta) * r * radius;
 
-      c.copy(SIGNAL).lerp(ICE, rand() * 0.8 + 0.1);
-      colors[i * 3] = c.r;
-      colors[i * 3 + 1] = c.g;
-      colors[i * 3 + 2] = c.b;
+      const t = rand() * 0.8 + 0.1;
+
+      // dark mode: teal/ice, additive
+      c.copy(SIGNAL).lerp(ICE, t);
+      darkColors[i * 3] = c.r;
+      darkColors[i * 3 + 1] = c.g;
+      darkColors[i * 3 + 2] = c.b;
+
+      // light mode: dark teal/blue, normal blend
+      c.copy(SIGNAL_LIGHT).lerp(ICE_LIGHT, t);
+      lightColors[i * 3] = c.r;
+      lightColors[i * 3 + 1] = c.g;
+      lightColors[i * 3 + 2] = c.b;
+
       seeds[i] = rand();
     }
-    return { positions, colors, seeds };
-  }, [count]);
+    return { positions, darkColors, lightColors, seeds };
+  }, [count]); // isLight removed — colors animate via uColorMix
 
+  // Uniforms initialised once; mutation happens imperatively in useFrame.
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
       uPixelRatio: { value: Math.min(window.devicePixelRatio, 1.5) },
       uSize: { value: 14 },
+      uColorMix: { value: isLight ? 1 : 0 },
+      uBaseAlpha: { value: isLight ? 0.6 : 0.5 },
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+
+  // Smooth transition state.
+  const isLightRef = useRef(isLight);
+  const colorMixCur = useRef(isLight ? 1 : 0);
+  const alphaCur = useRef(isLight ? 0.6 : 0.5);
+  const stableBlending = useRef<THREE.Blending>(
+    isLight ? THREE.NormalBlending : THREE.AdditiveBlending
+  );
+  const blendingCur = useRef(stableBlending.current);
+
+  useEffect(() => {
+    isLightRef.current = isLight;
+  }, [isLight]);
 
   useFrame((_, delta) => {
     if (!mat.current || !group.current) return;
     mat.current.uniforms.uTime.value += Math.min(delta, 0.1);
     group.current.rotation.y += delta * 0.12;
     group.current.rotation.x += delta * 0.02;
+
+    // Smooth theme transition — matches hero-particles timing.
+    const easeF = 1 - Math.exp(-delta * 5);
+    const targetMix = isLightRef.current ? 1 : 0;
+    const targetAlpha = isLightRef.current ? 0.6 : 0.5;
+    colorMixCur.current += (targetMix - colorMixCur.current) * easeF;
+    alphaCur.current += (targetAlpha - alphaCur.current) * easeF;
+    mat.current.uniforms.uColorMix.value = colorMixCur.current;
+    mat.current.uniforms.uBaseAlpha.value = alphaCur.current;
+
+    // Flip blending at the colour midpoint — least noticeable moment.
+    const wantedBlending =
+      colorMixCur.current > 0.5 ? THREE.NormalBlending : THREE.AdditiveBlending;
+    if (wantedBlending !== blendingCur.current) {
+      mat.current.blending = wantedBlending;
+      blendingCur.current = wantedBlending;
+    }
   });
 
   return (
@@ -110,7 +164,8 @@ function Beacon({ count }: { count: number }) {
       <points>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-          <bufferAttribute attach="attributes-aColor" args={[colors, 3]} />
+          <bufferAttribute attach="attributes-aDarkColor" args={[darkColors, 3]} />
+          <bufferAttribute attach="attributes-aLightColor" args={[lightColors, 3]} />
           <bufferAttribute attach="attributes-aSeed" args={[seeds, 1]} />
         </bufferGeometry>
         <shaderMaterial
@@ -120,7 +175,7 @@ function Beacon({ count }: { count: number }) {
           uniforms={uniforms}
           transparent
           depthWrite={false}
-          blending={THREE.AdditiveBlending}
+          blending={stableBlending.current}
         />
       </points>
     </group>
@@ -130,9 +185,11 @@ function Beacon({ count }: { count: number }) {
 export default function ContactBeaconScene({
   count,
   paused,
+  isLight,
 }: {
   count: number;
   paused: boolean;
+  isLight: boolean;
 }) {
   return (
     <Canvas
@@ -142,7 +199,7 @@ export default function ContactBeaconScene({
       gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
       style={{ pointerEvents: "none" }}
     >
-      <Beacon count={count} />
+      <Beacon count={count} isLight={isLight} />
     </Canvas>
   );
 }

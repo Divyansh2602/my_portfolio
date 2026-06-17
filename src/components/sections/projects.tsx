@@ -33,7 +33,7 @@ function Panel({
 }) {
   return (
     <article
-      className={`group relative flex shrink-0 flex-col justify-end overflow-hidden rounded-lg border p-8 lg:p-12 ${
+      className={`dark-zone group relative flex shrink-0 flex-col justify-end overflow-hidden rounded-lg border p-8 lg:p-12 ${
         reduced
           ? "min-h-[70vh] w-full"
           : "h-[78vh] w-[82vw] sm:w-[62vw] lg:w-[48vw]"

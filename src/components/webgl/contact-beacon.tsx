@@ -61,8 +61,8 @@ export function ContactBeacon() {
       aria-hidden
       className="pointer-events-none absolute left-1/2 top-8 -z-10 size-[42rem] max-w-[90vw] -translate-x-1/2"
     >
-      {!reduced && theme === "dark" && count !== null && count > 0 && (
-        <ContactBeaconScene count={count} paused={paused} />
+      {!reduced && count !== null && count > 0 && (
+        <ContactBeaconScene count={count} paused={paused} isLight={theme === "light"} />
       )}
     </div>
   );

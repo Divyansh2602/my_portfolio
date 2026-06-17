@@ -94,7 +94,7 @@ export function ChatWidget() {
     <div className="fixed bottom-6 right-6 z-[150] flex flex-col items-end gap-3">
       {/* Chat panel */}
       {open && (
-        <div className="glass flex h-[480px] w-80 flex-col overflow-hidden rounded-xl border border-silver/20 shadow-2xl sm:w-96">
+        <div className="chat-widget-panel flex h-[480px] w-80 flex-col overflow-hidden rounded-xl border border-silver/20 shadow-2xl sm:w-96">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-silver/10 px-4 py-3">
             <div className="flex items-center gap-2">

@@ -74,6 +74,7 @@ export function ParticleField() {
         particleState.morph = self.progress;
       },
       onLeave: () => (particleState.morph = 1),
+      onLeaveBack: () => (particleState.morph = 0),
       onEnter: () => setPaused(false),
     });
 
@@ -108,9 +109,8 @@ export function ParticleField() {
             : "radial-gradient(ellipse 80% 60% at 50% 38%, rgba(125,211,252,0.08), transparent 70%), radial-gradient(ellipse 50% 40% at 50% 42%, rgba(200,211,220,0.05), transparent 60%)",
         }}
       />
-      {/* Additive-blended particles wash out on light backgrounds — skip canvas */}
-      {!reducedMotion && !isLight && count !== null && count > 0 && (
-        <HeroParticlesScene count={count} paused={paused} />
+      {!reducedMotion && count !== null && count > 0 && (
+        <HeroParticlesScene count={count} paused={paused} isLight={isLight} />
       )}
     </div>
   );

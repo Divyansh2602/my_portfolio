@@ -17,6 +17,10 @@ import * as THREE from "three";
  * on an abstract bust — head sphere, neck cylinder, shoulder ellipsoid.
  * uMorph (driven by scroll, see particle-field.tsx) blends crystal →
  * bust as the visitor descends into Profile.
+ *
+ * Theme transition: both dark and light color arrays are precomputed once.
+ * uColorMix (0=dark, 1=light) is animated smoothly in useFrame — no
+ * geometry rebuild on toggle, blending flips at the 50% midpoint.
  */
 
 const VERTEX = /* glsl */ `
@@ -25,8 +29,10 @@ uniform vec3 uMouse;
 uniform float uPixelRatio;
 uniform float uSize;
 uniform float uMorph;
+uniform float uColorMix;
 
-attribute vec3 aColor;
+attribute vec3 aDarkColor;
+attribute vec3 aLightColor;
 attribute float aSeed;
 attribute vec3 aDrift;
 attribute vec3 aTarget;
@@ -52,12 +58,13 @@ void main() {
 
   gl_PointSize = uSize * uPixelRatio * (1.0 / -mvPosition.z);
 
-  vColor = aColor;
+  vColor = mix(aDarkColor, aLightColor, uColorMix);
   vTwinkle = 0.65 + 0.35 * sin(uTime * (1.5 + aSeed) + aSeed * 40.0);
 }
 `;
 
 const FRAGMENT = /* glsl */ `
+uniform float uBaseAlpha;
 varying vec3 vColor;
 varying float vTwinkle;
 
@@ -66,14 +73,17 @@ void main() {
   float d = length(uv);
   float alpha = smoothstep(0.5, 0.05, d) * vTwinkle;
   if (alpha < 0.01) discard;
-  // additive blending stacks fast at 80k points — keep alpha low or the
-  // core blows out to white
-  gl_FragColor = vec4(vColor, alpha * 0.35);
+  // dark mode (additive): keep low so stacked points don't blow out to white
+  // light mode (normal):  higher alpha so dark navy particles read on light bg
+  gl_FragColor = vec4(vColor, alpha * uBaseAlpha);
 }
 `;
 
 const SILVER = new THREE.Color("#C8D3DC");
 const ICE = new THREE.Color("#7DD3FC");
+// Light mode: dark navy/blue particles on arctic bg with NormalBlending
+const SILVER_LIGHT = new THREE.Color("#1A304E");
+const ICE_LIGHT = new THREE.Color("#1565C0");
 
 /** Octahedron face corners for surface sampling. */
 const OCTA_FACES: [THREE.Vector3, THREE.Vector3, THREE.Vector3][] = (() => {
@@ -172,17 +182,19 @@ function sampleBust(rand: () => number, out: THREE.Vector3) {
 const HEAD_CENTER = new THREE.Vector3(0, 0.92, 0);
 const TORSO_CENTER = new THREE.Vector3(0, -0.5, 0);
 
-function Particles({ count }: { count: number }) {
+function Particles({ count, isLight }: { count: number; isLight: boolean }) {
   const material = useRef<THREE.ShaderMaterial>(null);
   const group = useRef<THREE.Group>(null);
   const { gl } = useThree();
 
-  const { positions, colors, seeds, drift, targets } = useMemo(() => {
+  // Both color sets computed once — no rebuild on theme toggle.
+  const { positions, darkColors, lightColors, seeds, drift, targets } = useMemo(() => {
     const rand = mulberry32(20260612);
     const bustRand = mulberry32(987654321);
     const shards = buildShards(rand);
     const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
+    const darkColors = new Float32Array(count * 3);
+    const lightColors = new Float32Array(count * 3);
     const seeds = new Float32Array(count);
     const drift = new Float32Array(count * 3);
     const targets = new Float32Array(count * 3);
@@ -214,12 +226,21 @@ function Particles({ count }: { count: number }) {
       positions[i * 3 + 1] = v.y;
       positions[i * 3 + 2] = v.z;
 
-      // mostly silver, ~25% ice, brighter toward spire tips
-      c.copy(rand() < 0.25 ? ICE : SILVER);
-      const lift = 0.55 + 0.45 * Math.min(1, Math.abs(v.y) / 2.5);
-      colors[i * 3] = c.r * lift;
-      colors[i * 3 + 1] = c.g * lift;
-      colors[i * 3 + 2] = c.b * lift;
+      // Same roll drives both palettes so ice particles stay ice across themes
+      const colorRoll = rand();
+
+      // dark mode: light silver/ice, additive glow; tips brighter
+      c.copy(colorRoll < 0.25 ? ICE : SILVER);
+      const darkLift = 0.55 + 0.45 * Math.min(1, Math.abs(v.y) / 2.5);
+      darkColors[i * 3] = c.r * darkLift;
+      darkColors[i * 3 + 1] = c.g * darkLift;
+      darkColors[i * 3 + 2] = c.b * darkLift;
+
+      // light mode: dark navy/blue, normal blend — uniform opacity
+      c.copy(colorRoll < 0.25 ? ICE_LIGHT : SILVER_LIGHT);
+      lightColors[i * 3] = c.r;
+      lightColors[i * 3 + 1] = c.g;
+      lightColors[i * 3 + 2] = c.b;
 
       seeds[i] = rand();
 
@@ -238,9 +259,10 @@ function Particles({ count }: { count: number }) {
       targets[i * 3 + 1] = t.y;
       targets[i * 3 + 2] = t.z;
     }
-    return { positions, colors, seeds, drift, targets };
-  }, [count]);
+    return { positions, darkColors, lightColors, seeds, drift, targets };
+  }, [count]); // isLight removed — colors animate via uColorMix uniform
 
+  // Uniforms initialised once; all mutation happens imperatively in useFrame.
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
@@ -248,9 +270,26 @@ function Particles({ count }: { count: number }) {
       uPixelRatio: { value: Math.min(window.devicePixelRatio, 1.5) },
       uSize: { value: 16 },
       uMorph: { value: 0 },
+      uColorMix: { value: isLight ? 1 : 0 },
+      uBaseAlpha: { value: isLight ? 0.55 : 0.35 },
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+
+  // Smooth transition state — written by useEffect, read by useFrame.
+  const isLightRef = useRef(isLight);
+  const colorMixCur = useRef(isLight ? 1 : 0);
+  const alphaCur = useRef(isLight ? 0.55 : 0.35);
+  // Initial blending captured at mount; updated imperatively at the midpoint.
+  const stableBlending = useRef<THREE.Blending>(
+    isLight ? THREE.NormalBlending : THREE.AdditiveBlending
+  );
+  const blendingCur = useRef(stableBlending.current);
+
+  useEffect(() => {
+    isLightRef.current = isLight;
+  }, [isLight]);
 
   // pointer → object-space point on the z=0 plane, lerped for smoothness
   const ndc = useRef(new THREE.Vector2(99, 99));
@@ -290,16 +329,38 @@ function Particles({ count }: { count: number }) {
 
   useFrame((state, delta) => {
     if (!material.current || !group.current) return;
-    // accumulate from delta rather than reading state.clock —
-    // THREE.Clock is deprecated (r184) and R3F hasn't migrated yet
     material.current.uniforms.uTime.value += Math.min(delta, 0.1);
 
-    // ease toward the scroll-driven morph target, smoothstepped so both
-    // ends of the transition settle gently
-    morphCur.current += (particleState.morph - morphCur.current) * 0.09;
+    // If delta is large the canvas just resumed after a pause (fast scroll
+    // jumped past the morph zone). Snap to the target immediately so the
+    // crystal / bust is never stuck mid-morph after a fast scroll.
+    if (delta > 0.25) {
+      morphCur.current = particleState.morph;
+    } else {
+      // Frame-rate independent easing (half-life ≈ 87ms at k=8)
+      morphCur.current +=
+        (particleState.morph - morphCur.current) * (1 - Math.exp(-delta * 8));
+    }
     const m = morphCur.current;
     const eased = m * m * (3 - 2 * m);
     material.current.uniforms.uMorph.value = eased;
+
+    // Smooth theme transition — k=5 gives ~140ms half-life, ~400ms to settle.
+    const easeF = 1 - Math.exp(-delta * 5);
+    const targetMix = isLightRef.current ? 1 : 0;
+    const targetAlpha = isLightRef.current ? 0.55 : 0.35;
+    colorMixCur.current += (targetMix - colorMixCur.current) * easeF;
+    alphaCur.current += (targetAlpha - alphaCur.current) * easeF;
+    material.current.uniforms.uColorMix.value = colorMixCur.current;
+    material.current.uniforms.uBaseAlpha.value = alphaCur.current;
+
+    // Flip blending at the colour midpoint — least noticeable moment.
+    const wantedBlending =
+      colorMixCur.current > 0.5 ? THREE.NormalBlending : THREE.AdditiveBlending;
+    if (wantedBlending !== blendingCur.current) {
+      material.current.blending = wantedBlending;
+      blendingCur.current = wantedBlending;
+    }
 
     // bust drifts toward the right column of Profile on desktop and
     // faces forward — rotation slows as the morph completes
@@ -321,7 +382,8 @@ function Particles({ count }: { count: number }) {
       <points>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-          <bufferAttribute attach="attributes-aColor" args={[colors, 3]} />
+          <bufferAttribute attach="attributes-aDarkColor" args={[darkColors, 3]} />
+          <bufferAttribute attach="attributes-aLightColor" args={[lightColors, 3]} />
           <bufferAttribute attach="attributes-aSeed" args={[seeds, 1]} />
           <bufferAttribute attach="attributes-aDrift" args={[drift, 3]} />
           <bufferAttribute attach="attributes-aTarget" args={[targets, 3]} />
@@ -333,7 +395,7 @@ function Particles({ count }: { count: number }) {
           uniforms={uniforms}
           transparent
           depthWrite={false}
-          blending={THREE.AdditiveBlending}
+          blending={stableBlending.current}
         />
       </points>
     </group>
@@ -343,9 +405,11 @@ function Particles({ count }: { count: number }) {
 export default function HeroParticlesScene({
   count,
   paused,
+  isLight,
 }: {
   count: number;
   paused: boolean;
+  isLight: boolean;
 }) {
   return (
     <Canvas
@@ -359,7 +423,7 @@ export default function HeroParticlesScene({
       }}
       style={{ pointerEvents: "none" }}
     >
-      <Particles count={count} />
+      <Particles count={count} isLight={isLight} />
     </Canvas>
   );
 }

@@ -15,7 +15,7 @@ export function Vault() {
     <section
       id="vault"
       aria-label="Security"
-      className="bg-black px-6 py-32 lg:px-10"
+      className="dark-zone bg-black px-6 py-32 lg:px-10"
     >
       <SectionHeading index="06" label="vault" title="Vault" />
 

@@ -109,49 +109,50 @@
   --sidebar-ring: var(--signal);
 }
 
-/* Light theme — "Arctic Daylight"
-   --void stays dark (glass panels, button contrast), only semantic
-   background/foreground and the brand accent tokens change. */
+/* Light theme — "Bleached Void"
+   The page surface goes arctic-light while terminals, vault, project panels,
+   and the chat widget remain intentionally dark. --void stays #050507.
+   All accent values tuned to WCAG AA (≥4.5:1) on the light background. */
 html.light {
   color-scheme: light;
 
-  /* Brand tokens: ice + signal darkened for AA contrast on light bg.
-     Silver shifts to slate-blue so text-silver utilities stay legible. */
-  --silver: #4d6b8a;
-  --ice: #0369a1;
-  --signal: #0e7490;
+  /* Brand tokens (contrast on #f4f7fb):
+     silver #4a6685 → 5.6:1  ice #1565c0 → 5.5:1  signal #0c7a9a → 4.6:1 */
+  --silver: #4a6685;
+  --ice:    #1565c0;
+  --signal: #0c7a9a;
 
   /* Semantic surface */
-  --background: #f2f6fb;
-  --foreground: #0c1929;
+  --background: #f4f7fb;
+  --foreground:  #0d1f33;
 
-  --card: #e8eef6;
-  --card-foreground: #0c1929;
-  --popover: #e8eef6;
-  --popover-foreground: #0c1929;
+  --card:               #ebeef4;
+  --card-foreground:    #0d1f33;
+  --popover:            #ebeef4;
+  --popover-foreground: #0d1f33;
 
-  --primary: var(--ice);
-  --primary-foreground: #ffffff;
-  --secondary: color-mix(in oklab, #0c1929 7%, transparent);
-  --secondary-foreground: #0c1929;
-  --muted: color-mix(in oklab, #0c1929 6%, transparent);
-  --muted-foreground: color-mix(in oklab, #0c1929 48%, transparent);
-  --accent: color-mix(in oklab, #0c1929 8%, transparent);
-  --accent-foreground: #0c1929;
+  --primary:              var(--ice);
+  --primary-foreground:   #ffffff;
+  --secondary:            color-mix(in oklab, #0d1f33 7%, transparent);
+  --secondary-foreground: #0d1f33;
+  --muted:                color-mix(in oklab, #0d1f33 6%, transparent);
+  --muted-foreground:     color-mix(in oklab, #0d1f33 48%, transparent);
+  --accent:               color-mix(in oklab, #0d1f33 8%, transparent);
+  --accent-foreground:    #0d1f33;
   --destructive: oklch(0.55 0.191 22.216);
 
-  --border: color-mix(in oklab, #0c1929 12%, transparent);
-  --input: color-mix(in oklab, #0c1929 16%, transparent);
-  --ring: var(--signal);
+  --border: color-mix(in oklab, #0d1f33 11%, transparent);
+  --input:  color-mix(in oklab, #0d1f33 15%, transparent);
+  --ring:   var(--signal);
 
-  --sidebar: #e8eef6;
-  --sidebar-foreground: #0c1929;
-  --sidebar-primary: var(--ice);
+  --sidebar:                   #ebeef4;
+  --sidebar-foreground:        #0d1f33;
+  --sidebar-primary:           var(--ice);
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: color-mix(in oklab, #0c1929 8%, transparent);
-  --sidebar-accent-foreground: #0c1929;
-  --sidebar-border: color-mix(in oklab, #0c1929 12%, transparent);
-  --sidebar-ring: var(--signal);
+  --sidebar-accent:            color-mix(in oklab, #0d1f33 8%, transparent);
+  --sidebar-accent-foreground: #0d1f33;
+  --sidebar-border:            color-mix(in oklab, #0d1f33 11%, transparent);
+  --sidebar-ring:              var(--signal);
 }
 
 /* Lenis smooth scroll */
@@ -216,17 +217,55 @@ html.custom-cursor * {
     @apply font-heading font-medium tracking-[-0.04em] leading-[0.95];
   }
 
-  /* Glass panel — only where content sits over WebGL */
+  /* Glass panel — nav, contact form; sits over WebGL or page bg */
   .glass {
     background: color-mix(in oklab, var(--void) 65%, transparent);
     backdrop-filter: blur(12px);
     border: 1px solid var(--border);
   }
-  /* Light-mode glass: white frost instead of void black */
+  /* Light-mode glass: white frost for nav + contact panel */
   html.light .glass {
-    background: color-mix(in oklab, white 78%, transparent);
-    backdrop-filter: blur(12px);
+    background: color-mix(in oklab, white 82%, transparent);
+    backdrop-filter: blur(16px);
     border: 1px solid var(--border);
+  }
+
+  /* Smooth theme toggle — class is active for ~450ms while switching.
+     Scoped to the toggle window only so hover/animation states are unaffected. */
+  html.theme-transitioning * {
+    transition-property: background-color, color, border-color, box-shadow !important;
+    transition-duration: 0.35s !important;
+    transition-timing-function: ease !important;
+  }
+
+  /* Dark zone — intentional dark sections (vault, project panels) that stay
+     dark in both themes. Overrides all brand tokens to dark-mode values so
+     text-foreground / text-ice / text-silver resolve correctly on a dark bg. */
+  html.light .dark-zone {
+    --foreground:       #c8d3dc;
+    --silver:           #c8d3dc;
+    --ice:              #7dd3fc;
+    --signal:           #22d3ee;
+    --muted-foreground: color-mix(in oklab, #c8d3dc 55%, transparent);
+    --border:           color-mix(in oklab, #c8d3dc 10%, transparent);
+    color-scheme: dark;
+  }
+
+  /* Chat widget — always dark regardless of theme (terminal interface).
+     Overrides brand tokens inside so text-foreground/ice/signal/silver
+     resolve to dark-mode values even when html.light is active. */
+  .chat-widget-panel {
+    background: rgba(5, 5, 7, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  html.light .chat-widget-panel {
+    --foreground:       #c8d3dc;
+    --silver:           #c8d3dc;
+    --ice:              #7dd3fc;
+    --signal:           #22d3ee;
+    --muted-foreground: color-mix(in oklab, #c8d3dc 55%, transparent);
+    --border:           color-mix(in oklab, #c8d3dc 10%, transparent);
   }
 
   /* Static film grain (CSS fallback; shader version comes in Phase 2) */
