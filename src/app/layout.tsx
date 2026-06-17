@@ -95,6 +95,12 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="grain min-h-full flex flex-col">
+        {/* Apply saved theme before first paint to prevent dark→light flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('divi-theme');if(t==='light')document.documentElement.classList.add('light');}catch(e){}`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}

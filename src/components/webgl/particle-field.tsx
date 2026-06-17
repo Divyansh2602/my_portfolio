@@ -1,11 +1,12 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { getGPUTier } from "detect-gpu";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMediaQuery, REDUCED_MOTION_QUERY } from "@/lib/hooks";
+import { getThemeSnapshot, subscribeTheme } from "@/lib/theme";
 import { particleState } from "./hero-particles";
 
 const HeroParticlesScene = dynamic(() => import("./hero-particles"), {
@@ -33,6 +34,8 @@ let cachedCount: number | null = null;
 export function ParticleField() {
   const wrapper = useRef<HTMLDivElement>(null);
   const reducedMotion = useMediaQuery(REDUCED_MOTION_QUERY);
+  const theme = useSyncExternalStore(subscribeTheme, getThemeSnapshot, () => "dark" as const);
+  const isLight = theme === "light";
   const [count, setCount] = useState<number | null>(cachedCount);
   const [paused, setPaused] = useState(false);
 
@@ -96,15 +99,17 @@ export function ParticleField() {
       aria-hidden
       className="pointer-events-none fixed inset-0 -z-10"
     >
-      {/* Static gradient backdrop + reduced-motion / no-WebGL fallback */}
+      {/* Gradient backdrop — colours shift for light mode */}
       <div
         className="absolute inset-0"
         style={{
-          background:
-            "radial-gradient(ellipse 80% 60% at 50% 38%, rgba(125,211,252,0.08), transparent 70%), radial-gradient(ellipse 50% 40% at 50% 42%, rgba(200,211,220,0.05), transparent 60%)",
+          background: isLight
+            ? "radial-gradient(ellipse 80% 60% at 50% 38%, rgba(3,105,161,0.07), transparent 70%), radial-gradient(ellipse 50% 40% at 50% 42%, rgba(14,116,144,0.05), transparent 60%)"
+            : "radial-gradient(ellipse 80% 60% at 50% 38%, rgba(125,211,252,0.08), transparent 70%), radial-gradient(ellipse 50% 40% at 50% 42%, rgba(200,211,220,0.05), transparent 60%)",
         }}
       />
-      {!reducedMotion && count !== null && count > 0 && (
+      {/* Additive-blended particles wash out on light backgrounds — skip canvas */}
+      {!reducedMotion && !isLight && count !== null && count > 0 && (
         <HeroParticlesScene count={count} paused={paused} />
       )}
     </div>

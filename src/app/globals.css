@@ -61,7 +61,7 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* The site is dark-only by design — :root IS the dark theme. */
+/* Dark theme (default) */
 :root {
   --void: #050507;
   --silver: #c8d3dc;
@@ -109,6 +109,51 @@
   --sidebar-ring: var(--signal);
 }
 
+/* Light theme — "Arctic Daylight"
+   --void stays dark (glass panels, button contrast), only semantic
+   background/foreground and the brand accent tokens change. */
+html.light {
+  color-scheme: light;
+
+  /* Brand tokens: ice + signal darkened for AA contrast on light bg.
+     Silver shifts to slate-blue so text-silver utilities stay legible. */
+  --silver: #4d6b8a;
+  --ice: #0369a1;
+  --signal: #0e7490;
+
+  /* Semantic surface */
+  --background: #f2f6fb;
+  --foreground: #0c1929;
+
+  --card: #e8eef6;
+  --card-foreground: #0c1929;
+  --popover: #e8eef6;
+  --popover-foreground: #0c1929;
+
+  --primary: var(--ice);
+  --primary-foreground: #ffffff;
+  --secondary: color-mix(in oklab, #0c1929 7%, transparent);
+  --secondary-foreground: #0c1929;
+  --muted: color-mix(in oklab, #0c1929 6%, transparent);
+  --muted-foreground: color-mix(in oklab, #0c1929 48%, transparent);
+  --accent: color-mix(in oklab, #0c1929 8%, transparent);
+  --accent-foreground: #0c1929;
+  --destructive: oklch(0.55 0.191 22.216);
+
+  --border: color-mix(in oklab, #0c1929 12%, transparent);
+  --input: color-mix(in oklab, #0c1929 16%, transparent);
+  --ring: var(--signal);
+
+  --sidebar: #e8eef6;
+  --sidebar-foreground: #0c1929;
+  --sidebar-primary: var(--ice);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: color-mix(in oklab, #0c1929 8%, transparent);
+  --sidebar-accent-foreground: #0c1929;
+  --sidebar-border: color-mix(in oklab, #0c1929 12%, transparent);
+  --sidebar-ring: var(--signal);
+}
+
 /* Lenis smooth scroll */
 html.lenis,
 html.lenis body {
@@ -138,12 +183,19 @@ html.custom-cursor * {
     @apply font-sans;
     color-scheme: dark;
   }
+  html.light {
+    color-scheme: light;
+  }
   body {
     @apply bg-background text-foreground;
   }
   ::selection {
     background: var(--signal);
     color: var(--void);
+  }
+  html.light ::selection {
+    background: var(--signal);
+    color: #ffffff;
   }
   :focus-visible {
     outline: 2px solid var(--signal);
@@ -167,6 +219,12 @@ html.custom-cursor * {
   /* Glass panel — only where content sits over WebGL */
   .glass {
     background: color-mix(in oklab, var(--void) 65%, transparent);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+  }
+  /* Light-mode glass: white frost instead of void black */
+  html.light .glass {
+    background: color-mix(in oklab, white 78%, transparent);
     backdrop-filter: blur(12px);
     border: 1px solid var(--border);
   }

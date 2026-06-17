@@ -12,6 +12,8 @@ import { ViewTransition } from "@/components/fx/view-transition";
 import { PROJECTS, type Project } from "@/lib/content";
 import { scrollSignal } from "@/lib/scroll-signal";
 import { useMediaQuery, REDUCED_MOTION_QUERY } from "@/lib/hooks";
+import { getThemeSnapshot, subscribeTheme } from "@/lib/theme";
+import { useSyncExternalStore } from "react";
 
 const ProjectPanelScene = dynamic(
   () => import("@/components/webgl/project-panel"),
@@ -142,6 +144,7 @@ function Panel({
  */
 export function Projects() {
   const reduced = useMediaQuery(REDUCED_MOTION_QUERY);
+  const theme = useSyncExternalStore(subscribeTheme, getThemeSnapshot, () => "dark" as const);
   const sectionRef = useRef<HTMLElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -257,7 +260,7 @@ export function Projects() {
             <Panel
               key={project.slug}
               project={project}
-              webgl={webgl}
+              webgl={webgl && theme === "dark"}
               paused={!active}
               reduced={stacked}
             />

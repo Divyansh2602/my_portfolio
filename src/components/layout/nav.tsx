@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SECTIONS, SITE } from "@/lib/content";
 import { SoundToggle } from "@/components/fx/sound-toggle";
+import { ThemeToggle } from "@/components/fx/theme-toggle";
 
 export function Nav() {
   return (
@@ -38,6 +39,7 @@ export function Nav() {
             <span aria-hidden className="size-1.5 rounded-full bg-signal" />
             {SITE.status}
           </div>
+          <ThemeToggle />
           <SoundToggle />
         </div>
       </nav>
