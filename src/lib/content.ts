@@ -228,6 +228,7 @@ export const PROJECTS: Project[] = [
     ],
     links: {
       repo: "https://github.com/Divyansh2602/securescout-",
+      live: "https://securescout-web.vercel.app/",
     },
     accent: "#EF4444",
     architecture: [
