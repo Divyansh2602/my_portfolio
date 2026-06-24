@@ -231,6 +231,7 @@ export const PROJECTS: Project[] = [
       live: "https://securescout-web.vercel.app/",
     },
     accent: "#EF4444",
+    image: "/projects/securescout.png",
     architecture: [
       "Python engine — CVE, secret, crypto, injection, config detectors",
       "Express REST API — JWT auth, Zod validation, rate limiting",
