@@ -207,8 +207,40 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    slug: "data-integrity-analyzer",
+    slug: "securescout",
     index: "05",
+    title: "SecureScout",
+    tagline: "Enterprise static security scanner for banking systems",
+    description:
+      "Production-grade security platform built for PSB Hackathon 2026 (UCO Bank × IIT Kharagpur). Detects vulnerable dependencies, hardcoded secrets, weak cryptography, injection flaws, and insecure configurations in Python projects. Ships a full Next.js dashboard with 5-tier RBAC, immutable audit logging, and a CI/CD gate that exits non-zero on Critical findings.",
+    stack: [
+      "Python",
+      "TypeScript",
+      "Next.js",
+      "Express",
+      "PostgreSQL",
+      "Redis",
+    ],
+    metrics: [
+      { value: "PSB 2026", label: "UCO Bank × IIT KGP" },
+      { value: "5", label: "detector types" },
+      { value: "5-tier", label: "RBAC system" },
+    ],
+    links: {
+      repo: "https://github.com/Divyansh2602/securescout-",
+    },
+    accent: "#EF4444",
+    architecture: [
+      "Python engine — CVE, secret, crypto, injection, config detectors",
+      "Express REST API — JWT auth, Zod validation, rate limiting",
+      "5-tier RBAC — Viewer → Super Admin per-route guards",
+      "Next.js dashboard — scan management, findings, audit trail",
+      "CI/CD gate — --fail-on-critical exit code for pipeline blocking",
+    ],
+  },
+  {
+    slug: "data-integrity-analyzer",
+    index: "06",
     title: "Automated Data Integrity Analyzer",
     tagline: "Distributed crawling & data-validation backend",
     description:
