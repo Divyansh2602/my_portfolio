@@ -178,9 +178,9 @@ export const PROJECTS: Project[] = [
     slug: "accident-prediction-model",
     index: "04",
     title: "Accident Risk Model",
-    tagline: "ML pipeline for road-accident severity prediction",
+    tagline: "ML pipeline predicting 2026 road-accident severity & blackspots",
     description:
-      "End-to-end machine learning pipeline that ingests road-accident records, runs exploratory data analysis to surface high-risk patterns, and trains a classification model to predict accident severity. Feature engineering extracts time-of-day, weather, road-condition, and vehicle-type signals; the trained model outputs risk-tier scores with per-feature importance breakdowns for interpretability.",
+      "End-to-end machine learning pipeline that ingests road-accident records and predicts 2026 accident occurrences and geographic blackspots — high-risk locations where collisions are statistically concentrated. Exploratory data analysis surfaces hidden patterns; feature engineering extracts time-of-day, weather, road-condition, and vehicle-type signals. The trained classifier outputs risk-tier scores with per-feature importance breakdowns and pinpoints accident-prone zones for targeted intervention.",
     stack: [
       "Python",
       "scikit-learn",
