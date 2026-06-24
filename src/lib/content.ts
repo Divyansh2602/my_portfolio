@@ -240,34 +240,6 @@ export const PROJECTS: Project[] = [
       "CI/CD gate — --fail-on-critical exit code for pipeline blocking",
     ],
   },
-  {
-    slug: "data-integrity-analyzer",
-    index: "06",
-    title: "Automated Data Integrity Analyzer",
-    tagline: "Distributed crawling & data-validation backend",
-    description:
-      "A scalable backend that crawls, extracts, and validates data across distributed API surfaces. Modular parallel processing cut the validation cycle time by 60%, and the system emits structured per-endpoint findings reports with accuracy scores for downstream consumption.",
-    stack: [
-      "Python",
-      "REST APIs",
-      "Distributed Crawling",
-      "Parallel Processing",
-    ],
-    metrics: [
-      { value: "60%", label: "faster validation cycle" },
-      { value: "distributed", label: "parallel API crawl" },
-      { value: "scored", label: "per-endpoint reports" },
-    ],
-    links: { repo: "https://github.com/Divyansh2602" },
-    accent: "#22D3EE",
-    architecture: [
-      "Distributed crawler — multi-API surfaces",
-      "Parallel workers — modular processing",
-      "Validation engine — integrity checks",
-      "Scoring — per-endpoint accuracy",
-      "Findings report — downstream-ready",
-    ],
-  },
 ];
 
 export interface Experience {
