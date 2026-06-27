@@ -299,6 +299,18 @@ html.custom-cursor * {
     animation-play-state: paused;
   }
 
+  /* Vertical infinite rail — same trick on the Y axis, always scrolling
+     upward beside the profile photo card */
+  .marquee-y {
+    overflow: hidden;
+  }
+  .marquee-y-track {
+    animation: marquee-y 12s linear infinite;
+  }
+  .marquee-y:hover .marquee-y-track {
+    animation-play-state: paused;
+  }
+
   /* Cursor spotlight on bento cards */
   .spotlight::after {
     content: "";
@@ -380,6 +392,15 @@ html.konami body {
   }
 }
 
+@keyframes marquee-y {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
 @keyframes beam-spin {
   to {
     --beam-angle: 360deg;
@@ -390,7 +411,8 @@ html.konami body {
   .reveal-line {
     transform: none;
   }
-  .marquee-track {
+  .marquee-track,
+  .marquee-y-track {
     animation: none;
   }
   .border-beam::before {
