@@ -1,5 +1,6 @@
 import { Nav } from "@/components/layout/nav";
 import { Preloader } from "@/components/fx/preloader";
+import { ScrollGuides } from "@/components/fx/scroll-guides";
 import { Footer } from "@/components/layout/footer";
 import { SkewWrapper } from "@/components/providers/skew-wrapper";
 import { ParticleField } from "@/components/webgl/particle-field";
@@ -20,6 +21,9 @@ export default function Home() {
           opacity/paused state resets cleanly on back-navigation. */}
       <ParticleField />
       <Preloader />
+      {/* Page-wide scroll crosshair — fixed overlay outside SkewWrapper so its
+          position:fixed isn't broken by the transformed ancestor. */}
+      <ScrollGuides />
       <Nav />
       {/* Only the scrolling content shears on velocity — Nav/Preloader/
           ParticleField/Cursor stay outside so their fixed positioning
