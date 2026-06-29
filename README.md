@@ -1,6 +1,6 @@
 # DIVYANSH://VOID
 
-**Live → [divi-void.vercel.app](https://divi-void.vercel.app)**
+**Live → [portfolio-divi.vercel.app](https://portfolio-divi.vercel.app)**
 
 Personal portfolio of Divyansh Gupta — full-stack developer, security engineer, and blockchain auditor. Built as a single long-scroll experience with GPU-adaptive WebGL particle systems, GSAP scroll choreography, and a terminal-style AI chat widget.
 
@@ -81,7 +81,7 @@ UPSTASH_REDIS_REST_TOKEN=
 RESEND_API_KEY=
 
 # Canonical URL for metadata / OG tags
-NEXT_PUBLIC_SITE_URL=https://divi-void.vercel.app
+NEXT_PUBLIC_SITE_URL=https://portfolio-divi.vercel.app
 ```
 
 The site runs without any keys — the chat widget falls back gracefully and the contact form shows an error toast. WebGL, scroll animations, and theming are entirely client-side.

@@ -14,7 +14,7 @@ export const SITE = {
 
 /** Canonical site origin (no trailing slash). Override per-deploy. */
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://divi-void.vercel.app"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://portfolio-divi.vercel.app"
 ).replace(/\/$/, "");
 
 export const SECTIONS = [
