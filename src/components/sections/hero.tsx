@@ -100,12 +100,39 @@ export function Hero() {
           />
         </p>
 
-        <div
-          className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground"
-          aria-hidden
-        >
-          <span className="block h-12 w-px bg-border" />
-          scroll to descend
+        <div className="flex items-center gap-6">
+          <a
+            href="/resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 rounded border border-ice/30 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-ice transition-colors hover:border-signal hover:bg-signal/5 hover:text-signal"
+          >
+            View Resume
+            <svg
+              aria-hidden
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className="size-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            >
+              <path d="M6.22 8.72a.75.75 0 0 0 1.06 1.06l5.22-5.22v1.69a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5a.75.75 0 0 0 0 1.5h1.69L6.22 8.72Z" />
+              <path d="M3.5 6.75c0-.69.56-1.25 1.25-1.25H7A.75.75 0 0 0 7 4H4.75A2.75 2.75 0 0 0 2 6.75v4.5A2.75 2.75 0 0 0 4.75 14h4.5A2.75 2.75 0 0 0 12 11.25V9a.75.75 0 0 0-1.5 0v2.25c0 .69-.56 1.25-1.25 1.25h-4.5c-.69 0-1.25-.56-1.25-1.25v-4.5Z" />
+            </svg>
+          </a>
+          <a
+            href="/resume.pdf"
+            download="Divyansh_Gupta_Resume.pdf"
+            className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-signal"
+          >
+            ↓ Download
+          </a>
+          <div
+            className="hidden items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground md:flex"
+            aria-hidden
+          >
+            <span className="block h-12 w-px bg-border" />
+            scroll to descend
+          </div>
         </div>
       </div>
     </section>
