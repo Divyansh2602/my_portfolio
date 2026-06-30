@@ -28,21 +28,6 @@ function getFloor(scrollPct: number): { y: number; idx: number } {
   return { y: FLOORS[idx], idx };
 }
 
-/** Faint platform rails — one per section floor so the viewer can see the levels. */
-function Platforms() {
-  return (
-    <>
-      {FLOORS.map((y, i) => (
-        <mesh key={i} position={[0, y, 0]}>
-          {/* 200 wide: always spans any viewport */}
-          <boxGeometry args={[200, 0.025, 0.05]} />
-          <meshBasicMaterial color={ICE} transparent opacity={0.15} />
-        </mesh>
-      ))}
-    </>
-  );
-}
-
 function Robot() {
   const { size, clock } = useThree();
 
@@ -234,7 +219,6 @@ export function AgentBotScene() {
       gl={{ alpha: true, antialias: true }}
       style={{ width: "100%", height: "100%" }}
     >
-      <Platforms />
       <Robot />
     </Canvas>
   );
