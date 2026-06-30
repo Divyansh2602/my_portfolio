@@ -20,6 +20,8 @@ Personal portfolio of Divyansh Gupta — full-stack developer, security engineer
 | **Vault terminal** | Interactive shell in the Security section with real command responses |
 | **Custom cursor** | Fine-pointer only; degrades gracefully on touch |
 | **Easter eggs** | Konami code triggers a full-page glitch animation |
+| **Resume** | View/download from the nav and hero — no account or form required |
+| **Agent companion** | A small wireframe robot that traverses the whole page — Lenis scroll velocity drives it directly between a floor per section, WASD/Space add manual control, `G` toggles it off |
 
 ---
 
@@ -99,7 +101,7 @@ src/
 ├── components/
 │   ├── sections/            # 01 Surface → 07 Signal (one component per section)
 │   ├── webgl/               # Particle field, project panel shader, beacon
-│   ├── fx/                  # Chat widget, cursor, easter eggs, view transition
+│   ├── fx/                  # Chat widget, cursor, agent companion, easter eggs, view transition
 │   ├── layout/              # Nav, section heading, footer
 │   └── providers/           # Lenis smooth scroll provider
 └── lib/
@@ -137,7 +139,7 @@ npm run start   # production server
 
 ## License
 
-MIT — feel free to use the architecture or visual ideas as inspiration. Please don't deploy it as-is with my name and content.
+[MIT](LICENSE) — feel free to use the architecture or visual ideas as inspiration. Please don't deploy it as-is with my name and content.
 
 ---
 
