@@ -1,6 +1,5 @@
 import { Nav } from "@/components/layout/nav";
 import { Preloader } from "@/components/fx/preloader";
-import { ScrollGuides } from "@/components/fx/scroll-guides";
 import { AgentBot } from "@/components/fx/agent-bot";
 import { Footer } from "@/components/layout/footer";
 import { SkewWrapper } from "@/components/providers/skew-wrapper";
@@ -22,12 +21,9 @@ export default function Home() {
           opacity/paused state resets cleanly on back-navigation. */}
       <ParticleField />
       <Preloader />
-      {/* Page-wide scroll crosshair — fixed overlay outside SkewWrapper so its
-          position:fixed isn't broken by the transformed ancestor. */}
-      <ScrollGuides />
       {/* 3-D wireframe robot companion — full-viewport overlay that climbs
-          a 7-floor level mapped to the page's sections; scroll velocity
-          drives it directly, WASD+Space add manual control.
+          a 7-floor level mapped to the page's sections, purely driven by
+          scroll percentage (no keyboard control).
           Outside SkewWrapper so position:fixed isn't broken by the transform. */}
       <AgentBot />
       <Nav />

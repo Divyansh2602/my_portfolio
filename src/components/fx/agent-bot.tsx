@@ -63,7 +63,7 @@ export function AgentBot() {
         }}
         className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/50"
       >
-        [G] TOGGLE AGENT · SCROLL OR WASD + SPACE
+        [G] TOGGLE AGENT · DRIVEN BY SCROLL
       </div>
     </>
   );

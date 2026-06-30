@@ -1,15 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { scrollSignal } from "@/lib/scroll-signal";
 
 const GRAVITY = 20;
 const JUMP_FORCE = 6.5;
-const MANUAL_SPEED = 3.5; // world units/s from keyboard
-const SCROLL_DRIVE = 4;   // world units/s per Lenis velocity unit
-const MAX_SCROLL_SPEED = 6;
 const ICE = "#7dd3fc";
 const CYAN = "#22d3ee";
 
@@ -53,27 +49,9 @@ function Robot() {
     floorIdx: 0,
     grounded: true,
     facing: 1,          // 1 = right, -1 = left
-    keys: new Set<string>(),
     antennaTimer: 0,
     antennaOn: true,
   });
-
-  useEffect(() => {
-    const s = st.current;
-    const down = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement).tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA") return;
-      if (e.key === " ") e.preventDefault(); // stop page-space from scrolling
-      s.keys.add(e.key);
-    };
-    const up = (e: KeyboardEvent) => s.keys.delete(e.key);
-    document.addEventListener("keydown", down);
-    document.addEventListener("keyup", up);
-    return () => {
-      document.removeEventListener("keydown", down);
-      document.removeEventListener("keyup", up);
-    };
-  }, []);
 
   useFrame((_, delta) => {
     if (!robotRef.current) return;
@@ -84,9 +62,19 @@ function Robot() {
     // Max X so the robot stays inside the visible canvas width
     const halfW = HALF_H * (size.width / size.height) - 0.5;
 
-    // ── Floor from scroll position ──────────────────────────────────
+    // ── Scroll percentage drives everything — no keyboard input ──────
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     const pct = Math.min(1, window.scrollY / maxScroll);
+
+    // Horizontal position is a direct function of scroll percentage:
+    // 0% → far left, 100% → far right.
+    const targetX = (pct * 2 - 1) * halfW;
+    const prevX = s.x;
+    s.x += (targetX - s.x) * Math.min(1, dt * 6);
+    const dx = s.x - prevX;
+    if (Math.abs(dx) > 0.0008) s.facing = Math.sign(dx);
+
+    // ── Floor from scroll position ──────────────────────────────────
     const { y: newFloorY, idx: newIdx } = getFloor(pct);
 
     if (newIdx !== s.floorIdx) {
@@ -102,32 +90,13 @@ function Robot() {
     // Smooth ground transition
     s.groundY += (s.targetGroundY - s.groundY) * Math.min(1, dt * 4);
 
-    // ── Horizontal movement ─────────────────────────────────────────
-    // Scroll velocity directly drives the robot — scrolling IS movement
-    const sv = scrollSignal.velocity;
-    const scrollDx = Math.sign(sv) * Math.min(Math.abs(sv) * SCROLL_DRIVE, MAX_SCROLL_SPEED);
-
-    // Keyboard adds fine control on top
-    let manualDx = 0;
-    const ks = s.keys;
-    if (ks.has("ArrowLeft")  || ks.has("a") || ks.has("A")) manualDx = -1;
-    if (ks.has("ArrowRight") || ks.has("d") || ks.has("D")) manualDx =  1;
-
-    const totalDx = scrollDx + manualDx * MANUAL_SPEED;
-    s.x = Math.max(-halfW, Math.min(halfW, s.x + totalDx * dt));
-    if (Math.abs(totalDx) > 0.05) s.facing = Math.sign(totalDx);
-
-    // ── Jump ────────────────────────────────────────────────────────
-    if (s.grounded && (ks.has(" ") || ks.has("w") || ks.has("W") || ks.has("ArrowUp"))) {
-      s.vy = JUMP_FORCE;
-      s.grounded = false;
-    }
+    // ── Gravity / landing ──────────────────────────────────────────
     s.vy -= GRAVITY * dt;
     s.y  += s.vy * dt;
     if (s.y <= 0) { s.y = 0; s.vy = 0; s.grounded = true; }
 
     // Idle hover bob
-    const idle  = s.grounded && Math.abs(totalDx) < 0.05;
+    const idle  = s.grounded && Math.abs(dx) < 0.0008;
     const hover = idle ? Math.sin(t * 2) * 0.02 : 0;
 
     // ── Position robot so feet sit on the floor ─────────────────────
@@ -136,7 +105,7 @@ function Robot() {
     r.rotation.y = s.facing === -1 ? Math.PI : 0;
 
     // Lean into direction of travel
-    const targetLean = idle ? 0 : Math.sign(totalDx) * -0.12;
+    const targetLean = idle ? 0 : Math.sign(dx) * -0.12;
     r.rotation.z += (targetLean - r.rotation.z) * 0.18;
 
     if (light.current) light.current.position.copy(r.position);
