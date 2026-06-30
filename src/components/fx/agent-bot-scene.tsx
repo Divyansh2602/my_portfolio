@@ -20,8 +20,11 @@ const HALF_H = Math.tan((30 * Math.PI) / 180) * 8;
 // hero → about → experience → skills → projects → vault → contact
 const FLOORS = [-3.5, -2.0, -0.5, 1.0, -0.5, -2.0, -3.5] as const;
 
-// Robot local foot Y (bottom of legs below group center)
-const FOOT_Y = 0.60;
+// Overall robot size — scales the whole rig down from its original geometry.
+const ROBOT_SCALE = 0.6;
+
+// Robot local foot Y (bottom of legs below group center), scaled to match.
+const FOOT_Y = 0.60 * ROBOT_SCALE;
 
 function getFloor(scrollPct: number): { y: number; idx: number } {
   const idx = Math.min(FLOORS.length - 1, Math.floor(scrollPct * FLOORS.length));
@@ -168,7 +171,7 @@ function Robot() {
   return (
     <>
       <pointLight ref={light} color={CYAN} intensity={2} distance={4} />
-      <group ref={robotRef}>
+      <group ref={robotRef} scale={ROBOT_SCALE}>
         {/* Head */}
         <mesh position={[0, 0.85, 0]}>
           <sphereGeometry args={[0.22, 8, 6]} />
