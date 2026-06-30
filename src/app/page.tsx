@@ -25,7 +25,9 @@ export default function Home() {
       {/* Page-wide scroll crosshair — fixed overlay outside SkewWrapper so its
           position:fixed isn't broken by the transformed ancestor. */}
       <ScrollGuides />
-      {/* 3-D wireframe robot companion — fixed at viewport bottom, WASD+Space.
+      {/* 3-D wireframe robot companion — full-viewport overlay that climbs
+          a 7-floor level mapped to the page's sections; scroll velocity
+          drives it directly, WASD+Space add manual control.
           Outside SkewWrapper so position:fixed isn't broken by the transform. */}
       <AgentBot />
       <Nav />

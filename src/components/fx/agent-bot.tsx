@@ -40,10 +40,7 @@ export function AgentBot() {
           aria-hidden
           style={{
             position: "fixed",
-            bottom: 0,
-            left: 0,
-            width: "100%",
-            height: "180px",
+            inset: 0,
             pointerEvents: "none",
             zIndex: 20,
           }}
@@ -66,7 +63,7 @@ export function AgentBot() {
         }}
         className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/50"
       >
-        [G] TOGGLE AGENT · WASD + SPACE
+        [G] TOGGLE AGENT · SCROLL OR WASD + SPACE
       </div>
     </>
   );
