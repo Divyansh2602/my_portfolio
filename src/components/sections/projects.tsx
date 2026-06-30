@@ -25,14 +25,37 @@ function Panel({
   webgl,
   paused,
   reduced,
+  pinRef,
 }: {
   project: Project;
   webgl: boolean;
   paused: boolean;
   reduced: boolean;
+  pinRef: React.RefObject<HTMLDivElement | null>;
 }) {
+  const articleRef = useRef<HTMLElement>(null);
+  // During the horizontal scroll only ~1-2 of the 5 panels are ever
+  // visible at once — pause the rest individually instead of rendering
+  // all five WebGL canvases simultaneously the whole time the section
+  // is in view. rootMargin renders panels slightly before they're
+  // visible so there's no pop-in.
+  const [inView, setInView] = useState(true);
+
+  useEffect(() => {
+    if (!webgl) return;
+    const el = articleRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { root: pinRef.current, rootMargin: "0% 50% 0% 50%", threshold: 0 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [webgl, pinRef]);
+
   return (
     <article
+      ref={articleRef}
       className={`dark-zone group relative flex shrink-0 flex-col justify-end overflow-hidden rounded-lg border p-8 lg:p-12 ${
         reduced
           ? "min-h-[70vh] w-full"
@@ -60,7 +83,7 @@ function Panel({
             }}
           />
           {webgl && (
-            <ProjectPanelScene accent={project.accent} paused={paused} />
+            <ProjectPanelScene accent={project.accent} paused={paused || !inView} />
           )}
         </div>
       </ViewTransition>
@@ -263,6 +286,7 @@ export function Projects() {
               webgl={webgl && theme === "dark"}
               paused={!active}
               reduced={stacked}
+              pinRef={pinRef}
             />
           ))}
         </div>

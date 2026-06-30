@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -53,6 +53,26 @@ function Robot() {
     antennaOn: true,
   });
 
+  // scrollHeight forces a synchronous layout read — cache it and only
+  // recompute when the page's layout can actually change, not every frame.
+  const maxScrollRef = useRef(1);
+  useEffect(() => {
+    const measure = () => {
+      maxScrollRef.current = Math.max(
+        1,
+        document.documentElement.scrollHeight - window.innerHeight
+      );
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    const ro = new ResizeObserver(measure);
+    ro.observe(document.documentElement);
+    return () => {
+      window.removeEventListener("resize", measure);
+      ro.disconnect();
+    };
+  }, []);
+
   useFrame((_, delta) => {
     if (!robotRef.current) return;
     const s = st.current;
@@ -63,8 +83,7 @@ function Robot() {
     const halfW = HALF_H * (size.width / size.height) - 0.5;
 
     // ── Scroll percentage drives everything — no keyboard input ──────
-    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const pct = Math.min(1, window.scrollY / maxScroll);
+    const pct = Math.min(1, window.scrollY / maxScrollRef.current);
 
     // Horizontal position is a direct function of scroll percentage:
     // 0% → far left, 100% → far right.
@@ -188,7 +207,8 @@ export function AgentBotScene() {
   return (
     <Canvas
       camera={{ position: [0, 0, 8], fov: 60 }}
-      gl={{ alpha: true, antialias: true }}
+      dpr={[1, 1.5]}
+      gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
       style={{ width: "100%", height: "100%" }}
     >
       <Robot />
