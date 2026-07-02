@@ -253,7 +253,7 @@ export const EXPERIENCE: Experience[] = [
   {
     role: "Backend Engineer",
     org: "XtraGrad",
-    period: "2026 – Present",
+    period: "1 Jun – 30 Jun 2026",
     points: [
       "Building the backend for an AI-powered HR platform — designing APIs, data models, and AI integration layers for automated recruitment and candidate workflows.",
       "Architecting scalable Python services and integrating LLM-driven features to automate HR decision pipelines end-to-end.",
